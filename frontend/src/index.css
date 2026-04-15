@@ -1,0 +1,136 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+@import url('https://cdn-uicons.flaticon.com/4.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css');
+
+@import url('https://cdn-uicons.flaticon.com/4.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css');
+
+body {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  background-color: #0f172a;
+}
+
+.container {
+  padding: 20px;
+  text-align: center;
+  color: white;
+}
+
+.title {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+/* CARD */
+.card {
+  background-color: #1e293b;
+  padding: 15px;
+  border-radius: 12px;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+/* IMAGE */
+.image {
+  /* width: 100%; */
+  height: 250px!important;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* PRICE */
+.price {
+  color: #94a3b8;
+  margin: 10px 0;
+}
+
+/* BUTTON */
+.btn {
+  background-color: orange;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  font-weight: 600;  
+}
+
+.btn:hover {
+  background-color: darkorange;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #020617;
+  color: white;
+}
+
+.navbar a {
+  margin: 0 10px;
+  color: white;
+  text-decoration: none;
+}
+
+.navbar button {
+  background: orange;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.auth {
+  max-width: 500px;
+  margin: 80px auto;
+  padding: 20px;
+  background: #1e293b;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.auth input {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;  
+}
+
+.auth button {
+  width: 100%;
+  padding: 10px;
+  background: orange;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 16px;    
+  font-weight: 600;
+}
+
+.logo-img{
+  height: 25px;
+}
