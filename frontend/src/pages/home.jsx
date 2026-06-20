@@ -8,7 +8,7 @@ function Home() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/foods")
+      .get("https://quick-bite-backend-g4k9.onrender.com/foods")
       .then((res) => setFoods(res.data))
       .catch((err) => console.log(err));
   }, []);

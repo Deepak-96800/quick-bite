@@ -9,7 +9,7 @@ function Register() {
   });
 
   const handleRegister = async () => {
-    await axios.post("http://localhost:5000/register", data);
+    await axios.post("https://quick-bite-backend-g4k9.onrender.com/register", data);
     alert("Registered ✅");
     window.location.href = "/login";
   };

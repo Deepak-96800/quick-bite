@@ -5,7 +5,7 @@ function Login() {
   const [data, setData] = useState({ email: "", password: "" });
 
   const handleLogin = async () => {
-    const res = await axios.post("http://localhost:5000/login", data);
+    const res = await axios.post("https://quick-bite-backend-g4k9.onrender.com/login", data);
 
     localStorage.setItem("token", res.data.token);
     localStorage.setItem("user", JSON.stringify(res.data.user));
