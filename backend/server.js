@@ -139,6 +139,10 @@ app.get("/my-orders", authMiddleware, async (req, res) => {
   }
 });
 
+app.get("/", (req, res) => {
+  res.send("Quick Bite Backend is Running 🚀");
+});
+
 app.listen(process.env.PORT || 5000, () => {
   console.log("Server running...");
 });
