@@ -1,71 +1,73 @@
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const db = require("./db");
+const authMiddleware = require("./auth");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+/* Register */
 app.post("/register", async (req, res) => {
-    console.log("BODY:", req.body);
   const { name, email, password } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+    await db.query(
+      "INSERT INTO users (name, email, password) VALUES ($1, $2, $3)",
+      [name, email, hashedPassword]
+    );
 
-    db.query(sql, [name, email, hashedPassword], (err, result) => {
-      if (err) {
-        return res.status(500).json({ error: err });
-      }
-      res.json({ message: "User registered successfully" });
-    });
+    res.json({ message: "User registered successfully" });
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-const jwt = require("jsonwebtoken");
-
-app.post("/login", (req, res) => {
+/* Login */
+app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
-  const sql = "SELECT * FROM users WHERE email = ?";
+  try {
+    const result = await db.query(
+      "SELECT * FROM users WHERE email = $1",
+      [email]
+    );
 
-  db.query(sql, [email], async (err, result) => {
-    if (err) return res.status(500).json({ error: err });
-
-    if (result.length === 0) {
+    if (result.rows.length === 0) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const user = result[0];
+    const user = result.rows[0];
 
-    // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid password" });
     }
 
-    // Create token
-    const token = jwt.sign({ id: user.id }, "secretkey", {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      { id: user.id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
     res.json({
       message: "Login successful",
       token,
     });
-  });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-const authMiddleware = require("./auth");
-
-// Protected route
+/* Protected Route */
 app.get("/profile", authMiddleware, (req, res) => {
   res.json({
     message: "Welcome user",
@@ -73,54 +75,70 @@ app.get("/profile", authMiddleware, (req, res) => {
   });
 });
 
-app.post("/add-food", (req, res) => {
+/* Add Food */
+app.post("/add-food", async (req, res) => {
   const { name, price, image } = req.body;
 
-  const sql = "INSERT INTO foods (name, price, image) VALUES (?, ?, ?)";
-
-  db.query(sql, [name, price, image], (err, result) => {
-    if (err) return res.status(500).json(err);
+  try {
+    await db.query(
+      "INSERT INTO foods (name, price, image) VALUES ($1, $2, $3)",
+      [name, price, image]
+    );
 
     res.json({ message: "Food added" });
-  });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-app.get("/foods", (req, res) => {
-  const sql = "SELECT * FROM foods";
+/* Get Foods */
+app.get("/foods", async (req, res) => {
+  try {
+    const result = await db.query("SELECT * FROM foods");
 
-  db.query(sql, (err, result) => {
-    if (err) return res.status(500).json(err);
+    res.json(result.rows);
 
-    res.json(result);
-  });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-app.post("/order", authMiddleware, (req, res) => {
+/* Place Order */
+app.post("/order", authMiddleware, async (req, res) => {
   const { items, total_price } = req.body;
   const user_id = req.user.id;
 
-  const sql =
-    "INSERT INTO orders (user_id, items, total_price) VALUES (?, ?, ?)";
-
-  db.query(sql, [user_id, JSON.stringify(items), total_price], (err, result) => {
-    if (err) return res.status(500).json(err);
+  try {
+    await db.query(
+      "INSERT INTO orders (user_id, items, total_price) VALUES ($1, $2, $3)",
+      [user_id, JSON.stringify(items), total_price]
+    );
 
     res.json({ message: "Order placed successfully" });
-  });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-app.get("/my-orders", authMiddleware, (req, res) => {
+/* My Orders */
+app.get("/my-orders", authMiddleware, async (req, res) => {
   const user_id = req.user.id;
 
-  const sql = "SELECT * FROM orders WHERE user_id = ?";
+  try {
+    const result = await db.query(
+      "SELECT * FROM orders WHERE user_id = $1",
+      [user_id]
+    );
 
-  db.query(sql, [user_id], (err, result) => {
-    if (err) return res.status(500).json(err);
+    res.json(result.rows);
 
-    res.json(result);
-  });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
+app.listen(process.env.PORT || 5000, () => {
+  console.log("Server running...");
 });
