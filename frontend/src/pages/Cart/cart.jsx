@@ -1,6 +1,6 @@
-import "./cart.css";
+import "./Cart.css";
 import { useContext } from "react";
-import { CartContext } from "../../context/cartcontext";
+import { CartContext } from "../../context/CartContext";
 
 function Cart() {
   const {
@@ -11,13 +11,13 @@ function Cart() {
   } = useContext(CartContext);
 
   const subtotal = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
+    (sum, item) => sum + item.price * item.quantity,
     0
   );
 
-  const delivery = subtotal > 0 ? 40 : 0;
+  const deliveryFee = subtotal > 0 ? 40 : 0;
   const gst = subtotal * 0.05;
-  const grandTotal = subtotal + delivery + gst;
+  const total = subtotal + deliveryFee + gst;
 
   return (
     <div className="cart-page">
@@ -31,7 +31,7 @@ function Cart() {
             <div className="cart-item" key={item.id}>
               <img src={item.image} alt={item.name} />
 
-              <div className="cart-details">
+              <div className="details">
                 <h3>{item.name}</h3>
                 <p>₹{item.price}</p>
 
@@ -44,7 +44,7 @@ function Cart() {
                 </div>
 
                 <button
-                  className="remove-btn"
+                  className="remove"
                   onClick={() => removeFromCart(item.id)}
                 >
                   Remove
@@ -53,12 +53,14 @@ function Cart() {
             </div>
           ))}
 
-          <div className="cart-summary">
+          <div className="summary">
             <h3>Subtotal : ₹{subtotal.toFixed(2)}</h3>
-            <h3>Delivery : ₹{delivery}</h3>
-            <h3>GST : ₹{gst.toFixed(2)}</h3>
+            <h3>Delivery : ₹{deliveryFee}</h3>
+            <h3>GST (5%) : ₹{gst.toFixed(2)}</h3>
+
             <hr />
-            <h2>Total : ₹{grandTotal.toFixed(2)}</h2>
+
+            <h2>Total : ₹{total.toFixed(2)}</h2>
 
             <button className="checkout-btn">
               Proceed to Checkout
