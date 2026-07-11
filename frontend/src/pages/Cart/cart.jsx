@@ -11,6 +11,8 @@ function Cart() {
     removeFromCart,
   } = useContext(CartContext);
 
+  const navigate = useNavigate();
+
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
