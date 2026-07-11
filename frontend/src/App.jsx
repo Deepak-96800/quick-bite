@@ -1,13 +1,23 @@
-import Navbar from "./components/Navbar/navbar";
-import Hero from "./components/Hero/hero";
+import Navbar from "./components/Navbar/Navbar";
+import Hero from "./components/Hero/Hero";
+import Categories from "./components/Categories/Categories";
 
 function App() {
-  return (
-    <>
-      <Navbar />
-      <Hero />
-    </>
-  );
+
+    return (
+
+        <>
+
+            <Navbar/>
+
+            <Hero/>
+
+            <Categories/>
+
+        </>
+
+    )
+
 }
 
 export default App;

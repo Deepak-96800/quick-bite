@@ -1,0 +1,71 @@
+.categories{
+
+    padding:70px 8%;
+
+    background:#FFF8F5;
+
+}
+
+.categories h2{
+
+    text-align:center;
+
+    font-size:34px;
+
+    margin-bottom:50px;
+
+}
+
+.category-container{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+
+    gap:25px;
+
+}
+
+.category-card{
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:20px;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    transition:.35s;
+
+    box-shadow:0 5px 18px rgba(0,0,0,.08);
+
+}
+
+.category-card:hover{
+
+    transform:translateY(-8px);
+
+    background:#E23744;
+
+    color:white;
+
+}
+
+.icon{
+
+    font-size:55px;
+
+    margin-bottom:20px;
+
+}
+
+.category-card p{
+
+    font-size:18px;
+
+    font-weight:600;
+
+}
