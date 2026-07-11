@@ -113,3 +113,23 @@ border-radius:25px;
 cursor:pointer;
 
 }
+
+.food-card img{
+
+transition:.4s;
+
+}
+
+.food-card:hover img{
+
+transform:scale(1.08);
+
+}
+
+button{
+
+border-radius:30px;
+
+font-weight:600;
+
+}
