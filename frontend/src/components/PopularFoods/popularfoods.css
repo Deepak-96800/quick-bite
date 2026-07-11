@@ -1,27 +1,17 @@
-.popular-foods{
-
-    padding:70px 8%;
-
-    background:#fff;
-
+.popular-foods {
+  padding: 80px 8%;
+  background: #fff8f5;
 }
 
-.popular-foods h2{
-
-    text-align:center;
-
-    font-size:35px;
-
-    margin-bottom:45px;
-
+.popular-foods h2 {
+  text-align: center;
+  font-size: 38px;
+  color: #222;
+  margin-bottom: 50px;
 }
 
-.food-grid{
-
-    display:grid;
-
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-
-    gap:30px;
-
+.food-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px;
 }
