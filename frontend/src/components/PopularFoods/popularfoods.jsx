@@ -1,6 +1,7 @@
 import "./popularfoods.css";
 import FoodCard from "../FoodCard/foodcard";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 
 function PopularFoods() {
@@ -24,11 +25,9 @@ function PopularFoods() {
 
     }, []);
 
-    const addToCart = (food) => {
-
-        alert(food.name + " added to cart");
-
-    };
+const addToCart = (food) => {
+  toast.success(`${food.name} added to cart`);
+};
 
     return (
 

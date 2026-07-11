@@ -1,34 +1,44 @@
-import "./foodcard.css";
+<div className="food-card">
 
-function FoodCard({ food, addToCart }) {
-  return (
-    <div className="food-card">
+    <div className="favorite">
 
-      <img
+        ❤
+
+    </div>
+
+    <img
         src={food.image}
         alt={food.name}
-      />
+    />
 
-      <div className="food-info">
+    <div className="food-content">
 
         <h3>{food.name}</h3>
 
-        <p className="rating">
-          ⭐ 4.8
-        </p>
+        <p>{food.description}</p>
 
-        <h2>₹{food.price}</h2>
+        <div className="rating">
 
-        <button
-          onClick={() => addToCart(food)}
-        >
-          Add to Cart
-        </button>
+            ⭐ {food.rating}
 
-      </div>
+        </div>
+
+        <div className="bottom">
+
+            <span>
+
+                ₹{food.price}
+
+            </span>
+
+            <button>
+
+                Add
+
+            </button>
+
+        </div>
 
     </div>
-  );
-}
 
-export default FoodCard;
+</div>
