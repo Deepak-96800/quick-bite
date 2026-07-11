@@ -1,4 +1,4 @@
-import "./FoodCard.css";
+import "./foodcard.css";
 
 function FoodCard({ food, addToCart }) {
   return (
