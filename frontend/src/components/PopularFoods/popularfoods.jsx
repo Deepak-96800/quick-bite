@@ -1,58 +1,49 @@
 import "./popularfoods.css";
 import FoodCard from "../FoodCard/foodcard";
 import axios from "axios";
+import { useEffect, useState, useContext } from "react";
 import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
+import { CartContext } from "../../context/cartcontext";
 
 function PopularFoods() {
 
-    const [foods, setFoods] = useState([]);
+  const [foods, setFoods] = useState([]);
 
-    useEffect(() => {
+  const { addToCart } = useContext(CartContext);
 
-        axios
-            .get("https://quick-bite-backend-g4k9.onrender.com/foods")
-            .then((res) => {
+  useEffect(() => {
+    axios
+      .get("https://quick-bite-backend-g4k9.onrender.com/foods")
+      .then((res) => {
+        setFoods(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
-                setFoods(res.data);
+  return (
+    <section className="popular-foods">
 
-            })
-            .catch((err) => {
+      <h2>Popular Foods</h2>
 
-                console.log(err);
+      <div className="food-grid">
 
-            });
+        {foods.map((food) => (
+          <FoodCard
+            key={food.id}
+            food={food}
+            addToCart={(food) => {
+              addToCart(food);
+              toast.success(`${food.name} added to cart`);
+            }}
+          />
+        ))}
 
-    }, []);
+      </div>
 
-const addToCart = (food) => {
-  toast.success(`${food.name} added to cart`);
-};
-
-    return (
-
-        <section className="popular-foods">
-
-            <h2>Popular Foods</h2>
-
-            <div className="food-grid">
-
-                {foods.map(food => (
-
-                    <FoodCard
-                        key={food.id}
-                        food={food}
-                        addToCart={addToCart}
-                    />
-
-                ))}
-
-            </div>
-
-        </section>
-
-    );
-
+    </section>
+  );
 }
 
 export default PopularFoods;

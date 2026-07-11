@@ -25,9 +25,9 @@ function FoodCard({ food, addToCart }) {
 
           <span>₹{food.price}</span>
 
-          <button onClick={() => addToCart(food)}>
-            Add
-          </button>
+<button onClick={() => addToCart(food)}>
+  Add to Cart
+</button>
 
         </div>
 
