@@ -1,6 +1,6 @@
-import Navbar from "./components/Navbar/Navbar";
-import Hero from "./components/Hero/Hero";
-import Categories from "./components/Categories/Categories";
+import Navbar from "./components/Navbar/navbar";
+import Hero from "./components/Hero/hero";
+import Categories from "./components/Categories/categories";
 
 function App() {
 
