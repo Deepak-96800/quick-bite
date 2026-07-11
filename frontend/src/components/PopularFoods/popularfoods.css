@@ -1,0 +1,27 @@
+.popular-foods{
+
+    padding:70px 8%;
+
+    background:#fff;
+
+}
+
+.popular-foods h2{
+
+    text-align:center;
+
+    font-size:35px;
+
+    margin-bottom:45px;
+
+}
+
+.food-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+
+    gap:30px;
+
+}
