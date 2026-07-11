@@ -4,18 +4,19 @@ import Categories from "./components/Categories/categories";
 import PopularFoods from "./components/PopularFoods/popularfoods";
 import { ToastContainer } from "react-toastify";
 
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Home from "./pages/home";
+import Cart from "./pages/Cart/cart";
+
 function App() {
   return (
-    <>
-      <Navbar />
-      <Hero />
-      <Categories />
-      <PopularFoods />
-      <ToastContainer
-        position="top-right"
-        autoClose={2000}
-      />
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/cart" element={<Cart />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
