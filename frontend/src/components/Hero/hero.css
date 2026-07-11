@@ -1,0 +1,77 @@
+.hero {
+  height: 85vh;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.overlay {
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,.55);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+  color: white;
+  padding: 20px;
+}
+
+.overlay h1 {
+  font-size: 52px;
+  max-width: 800px;
+  margin-bottom: 20px;
+}
+
+.overlay p {
+  font-size: 20px;
+  margin-bottom: 35px;
+}
+
+.search-box {
+  display: flex;
+  width: 600px;
+  max-width: 90%;
+  background: white;
+  border-radius: 50px;
+  overflow: hidden;
+}
+
+.search-box input {
+  flex: 1;
+  padding: 18px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+}
+
+.search-box button {
+  background: #E23744;
+  color: white;
+  border: none;
+  padding: 0 30px;
+  cursor: pointer;
+}
+
+.search-box button:hover {
+  background: #c62839;
+}
+
+.explore-btn {
+  margin-top: 30px;
+  background: #E23744;
+  color: white;
+  padding: 15px 35px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.explore-btn:hover {
+  background: #c62839;
+}
