@@ -1,4 +1,5 @@
 import "./checkout.css";
+import axios from "axios";
 import { useContext, useState } from "react";
 import { CartContext } from "../../context/cartcontext";
 
@@ -30,6 +31,53 @@ function Checkout() {
       cartItems,
       total,
     });
+
+const handlePayment = async () => {
+  try {
+    const { data: order } = await axios.post(
+      "https://quick-bite-backend-g4k9.onrender.com/payment/create-order",
+      {
+        amount: total,
+      }
+    );
+
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: order.amount,
+      currency: order.currency,
+      name: "Quick Bite",
+      description: "Food Order Payment",
+      order_id: order.id,
+
+      handler: async function (response) {
+        alert("Payment Successful!");
+
+        console.log(response);
+
+        // Next step:
+        // Verify payment with backend
+        // Save order
+        // Empty cart
+      },
+
+      prefill: {
+        name: address.name,
+        contact: address.phone,
+      },
+
+      theme: {
+        color: "#E23744",
+      },
+    };
+
+    const razorpay = new window.Razorpay(options);
+    razorpay.open();
+
+  } catch (err) {
+    console.log(err);
+    alert("Payment failed.");
+  }
+};
 
     alert("Order details ready! Next we'll send them to the backend.");
   };
@@ -89,9 +137,10 @@ function Checkout() {
             required
           />
 
-          <button type="submit">
-            Continue to Payment
-          </button>
+<button type="button" onClick={handlePayment}>
+  Pay ₹{total.toFixed(2)}
+</button>
+
         </form>
       </div>
 

@@ -1,9 +1,11 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("./db");
 const authMiddleware = require("./auth");
+const paymentRoutes = require("./routes/payment");
 
 const app = express();
 
@@ -142,6 +144,8 @@ app.get("/my-orders", authMiddleware, async (req, res) => {
 app.get("/", (req, res) => {
   res.send("Quick Bite Backend is Running 🚀");
 });
+
+app.use("/payment", paymentRoutes);
 
 app.listen(process.env.PORT || 5000, () => {
   console.log("Server running...");
