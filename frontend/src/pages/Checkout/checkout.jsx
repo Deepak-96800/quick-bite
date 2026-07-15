@@ -23,63 +23,82 @@ function Checkout() {
   const gst = subtotal * 0.05;
   const total = subtotal + delivery + gst;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handlePayment = async () => {
+    // Validation
+    if (
+      !address.name ||
+      !address.phone ||
+      !address.address ||
+      !address.city ||
+      !address.pincode
+    ) {
+      alert("Please fill all delivery details.");
+      return;
+    }
 
-    console.log({
-      address,
-      cartItems,
-      total,
-    });
+    if (cartItems.length === 0) {
+      alert("Your cart is empty.");
+      return;
+    }
 
-const handlePayment = async () => {
-  try {
-    const { data: order } = await axios.post(
-      "https://quick-bite-backend-g4k9.onrender.com/payment/create-order",
-      {
-        amount: total,
-      }
-    );
+    try {
+      // Create Razorpay Order
+      const { data: order } = await axios.post(
+        "https://quick-bite-backend-g4k9.onrender.com/payment/create-order",
+        {
+          amount: total,
+        }
+      );
 
-    const options = {
-      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-      amount: order.amount,
-      currency: order.currency,
-      name: "Quick Bite",
-      description: "Food Order Payment",
-      order_id: order.id,
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: "Quick Bite",
+        description: "Food Order Payment",
+        image: "/logo.png",
+        order_id: order.id,
 
-      handler: async function (response) {
-        alert("Payment Successful!");
+        handler: async function (response) {
+          console.log("Payment Success:", response);
 
-        console.log(response);
+          alert("🎉 Payment Successful!");
 
-        // Next step:
-        // Verify payment with backend
-        // Save order
-        // Empty cart
-      },
+          // NEXT STEP
+          // Verify payment
+          // Save order
+          // Clear cart
+          // Navigate to success page
+        },
 
-      prefill: {
-        name: address.name,
-        contact: address.phone,
-      },
+        prefill: {
+          name: address.name,
+          contact: address.phone,
+        },
 
-      theme: {
-        color: "#E23744",
-      },
-    };
+        notes: {
+          address: `${address.address}, ${address.city} - ${address.pincode}`,
+        },
 
-    const razorpay = new window.Razorpay(options);
-    razorpay.open();
+        theme: {
+          color: "#E23744",
+        },
+      };
 
-  } catch (err) {
-    console.log(err);
-    alert("Payment failed.");
-  }
-};
+      const razorpay = new window.Razorpay(options);
 
-    alert("Order details ready! Next we'll send them to the backend.");
+      razorpay.on("payment.failed", function (response) {
+        alert("Payment Failed");
+
+        console.log(response.error);
+      });
+
+      razorpay.open();
+    } catch (error) {
+      console.log(error);
+
+      alert("Unable to initiate payment.");
+    }
   };
 
   return (
@@ -87,85 +106,81 @@ const handlePayment = async () => {
       <div className="checkout-form">
         <h2>Delivery Address</h2>
 
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Full Name"
-            value={address.name}
-            onChange={(e) =>
-              setAddress({ ...address, name: e.target.value })
-            }
-            required
-          />
+        <input
+          type="text"
+          placeholder="Full Name"
+          value={address.name}
+          onChange={(e) =>
+            setAddress({ ...address, name: e.target.value })
+          }
+        />
 
-          <input
-            type="text"
-            placeholder="Phone Number"
-            value={address.phone}
-            onChange={(e) =>
-              setAddress({ ...address, phone: e.target.value })
-            }
-            required
-          />
+        <input
+          type="text"
+          placeholder="Phone Number"
+          value={address.phone}
+          onChange={(e) =>
+            setAddress({ ...address, phone: e.target.value })
+          }
+        />
 
-          <textarea
-            placeholder="Full Address"
-            value={address.address}
-            onChange={(e) =>
-              setAddress({ ...address, address: e.target.value })
-            }
-            required
-          />
+        <textarea
+          placeholder="Full Address"
+          value={address.address}
+          onChange={(e) =>
+            setAddress({ ...address, address: e.target.value })
+          }
+        />
 
-          <input
-            type="text"
-            placeholder="City"
-            value={address.city}
-            onChange={(e) =>
-              setAddress({ ...address, city: e.target.value })
-            }
-            required
-          />
+        <input
+          type="text"
+          placeholder="City"
+          value={address.city}
+          onChange={(e) =>
+            setAddress({ ...address, city: e.target.value })
+          }
+        />
 
-          <input
-            type="text"
-            placeholder="Pincode"
-            value={address.pincode}
-            onChange={(e) =>
-              setAddress({ ...address, pincode: e.target.value })
-            }
-            required
-          />
+        <input
+          type="text"
+          placeholder="Pincode"
+          value={address.pincode}
+          onChange={(e) =>
+            setAddress({ ...address, pincode: e.target.value })
+          }
+        />
 
-<button type="button" onClick={handlePayment}>
-  Pay ₹{total.toFixed(2)}
-</button>
-
-        </form>
+        <button
+          className="payment-btn"
+          type="button"
+          onClick={handlePayment}
+        >
+          Pay ₹{total.toFixed(2)}
+        </button>
       </div>
 
       <div className="order-summary">
         <h2>Order Summary</h2>
 
         {cartItems.map((item) => (
-          <div key={item.id} className="summary-item">
+          <div className="summary-item" key={item.id}>
             <span>
               {item.name} × {item.quantity}
             </span>
 
-            <span>
-              ₹{item.price * item.quantity}
-            </span>
+            <span>₹{item.price * item.quantity}</span>
           </div>
         ))}
 
         <hr />
 
-        <p>Subtotal : ₹{subtotal}</p>
-        <p>Delivery : ₹{delivery}</p>
-        <p>GST : ₹{gst.toFixed(2)}</p>
+        <p>Subtotal: ₹{subtotal.toFixed(2)}</p>
 
-        <h3>Total : ₹{total.toFixed(2)}</h3>
+        <p>Delivery: ₹{delivery}</p>
+
+        <p>GST: ₹{gst.toFixed(2)}</p>
+
+        <h3>Total: ₹{total.toFixed(2)}</h3>
       </div>
     </div>
   );
