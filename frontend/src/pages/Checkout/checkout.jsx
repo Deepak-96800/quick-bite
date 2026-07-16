@@ -131,14 +131,11 @@ function Checkout() {
       razorpay.open();
 
     } catch (error) {
-  console.error("Order Error:", error);
+  console.log("Status:", error.response?.status);
+  console.log("Response:", error.response?.data);
+  console.log(error);
 
-  if (error.response) {
-    console.log(error.response.data);
-    alert(JSON.stringify(error.response.data));
-  } else {
-    alert(error.message);
-  }
+  alert(JSON.stringify(error.response?.data));
 }
   };
 
