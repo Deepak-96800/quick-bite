@@ -109,19 +109,45 @@ app.get("/foods", async (req, res) => {
 
 /* Place Order */
 app.post("/order", authMiddleware, async (req, res) => {
-  const { items, total_price } = req.body;
+  const {
+    items,
+    total_price,
+    payment_id,
+    payment_status,
+    delivery_address,
+  } = req.body;
+
   const user_id = req.user.id;
 
   try {
-    await db.query(
-      "INSERT INTO orders (user_id, items, total_price) VALUES ($1, $2, $3)",
-      [user_id, JSON.stringify(items), total_price]
+    const result = await db.query(
+      `INSERT INTO orders
+      (user_id, items, total_price, payment_id, payment_status, delivery_address)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING *`,
+      [
+        user_id,
+        JSON.stringify(items),
+        total_price,
+        payment_id,
+        payment_status,
+        delivery_address,
+      ]
     );
 
-    res.json({ message: "Order placed successfully" });
+    res.status(201).json({
+      success: true,
+      message: "Order placed successfully",
+      order: result.rows[0],
+    });
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Order Error:", error);
+
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
 });
 

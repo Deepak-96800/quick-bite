@@ -2,29 +2,65 @@ import React, { useState } from "react";
 import axios from "axios";
 
 function Login() {
-  const [data, setData] = useState({ email: "", password: "" });
+  const [data, setData] = useState({
+    email: "",
+    password: "",
+  });
 
   const handleLogin = async () => {
-    const res = await axios.post("https://quick-bite-backend-g4k9.onrender.com/login", data);
+    try {
+      const res = await axios.post(
+        "https://quick-bite-backend-g4k9.onrender.com/login",
+        data
+      );
 
-    localStorage.setItem("token", res.data.token);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
+      // Save JWT token
+      localStorage.setItem("token", res.data.token);
 
-    alert("Login successful ✅");
-    window.location.href = "/";
+      alert("✅ Login Successful");
+
+      // Redirect to home
+      window.location.href = "/";
+    } catch (error) {
+      console.log(error);
+
+      alert(
+        error.response?.data?.message || "Login Failed"
+      );
+    }
   };
 
   return (
     <div className="auth">
       <h2>Login</h2>
 
-      <input placeholder="Email"
-        onChange={(e) => setData({ ...data, email: e.target.value })} />
+      <input
+        type="email"
+        placeholder="Email"
+        value={data.email}
+        onChange={(e) =>
+          setData({
+            ...data,
+            email: e.target.value,
+          })
+        }
+      />
 
-      <input type="password" placeholder="Password"
-        onChange={(e) => setData({ ...data, password: e.target.value })} />
+      <input
+        type="password"
+        placeholder="Password"
+        value={data.password}
+        onChange={(e) =>
+          setData({
+            ...data,
+            password: e.target.value,
+          })
+        }
+      />
 
-      <button onClick={handleLogin}>Login</button>
+      <button onClick={handleLogin}>
+        Login
+      </button>
     </div>
   );
 }
