@@ -7,11 +7,11 @@ function CartProvider({ children }) {
 
   const addToCart = (food) => {
     setCartItems((prevItems) => {
-      // Check if food already exists
-      const existingItem = prevItems.find((item) => item.id === food.id);
+      const existingItem = prevItems.find(
+        (item) => item.id === food.id
+      );
 
       if (existingItem) {
-        // Increase quantity
         return prevItems.map((item) =>
           item.id === food.id
             ? { ...item, quantity: item.quantity + 1 }
@@ -19,7 +19,6 @@ function CartProvider({ children }) {
         );
       }
 
-      // Add new item
       return [...prevItems, { ...food, quantity: 1 }];
     });
   };
@@ -52,6 +51,11 @@ function CartProvider({ children }) {
     );
   };
 
+  // ✅ Clear Cart
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -60,6 +64,7 @@ function CartProvider({ children }) {
         removeFromCart,
         increaseQuantity,
         decreaseQuantity,
+        clearCart, // ✅ Added here
       }}
     >
       {children}

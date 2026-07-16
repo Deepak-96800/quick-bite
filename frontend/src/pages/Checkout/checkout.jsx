@@ -1,10 +1,12 @@
 import "./checkout.css";
 import axios from "axios";
 import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { CartContext } from "../../context/cartcontext";
 
 function Checkout() {
-  const { cartItems } = useContext(CartContext);
+  const { cartItems, clearCart } = useContext(CartContext);
+  const navigate = useNavigate();
 
   const [address, setAddress] = useState({
     name: "",
@@ -24,7 +26,7 @@ function Checkout() {
   const total = subtotal + delivery + gst;
 
   const handlePayment = async () => {
-    // Validation
+    // Validate Address
     if (
       !address.name ||
       !address.phone ||
@@ -59,29 +61,50 @@ function Checkout() {
         image: "/logo.png",
         order_id: order.id,
 
-handler: async function (response) {
-  try {
-    const verify = await axios.post(
-      "https://quick-bite-backend-g4k9.onrender.com/payment/verify-payment",
-      response
-    );
+        handler: async function (response) {
+          try {
+            // Verify Payment
+            const verify = await axios.post(
+              "https://quick-bite-backend-g4k9.onrender.com/payment/verify-payment",
+              response
+            );
 
-    if (verify.data.success) {
-      alert("✅ Payment Verified Successfully!");
+            if (!verify.data.success) {
+              alert("Payment verification failed.");
+              return;
+            }
 
-      // Next step:
-      // Save order
-      // Clear cart
-      // Redirect to Success page
-    } else {
-      alert("Payment verification failed.");
-    }
+            // Save Order
+            await axios.post(
+              "https://quick-bite-backend-g4k9.onrender.com/order",
+              {
+                items: cartItems,
+                total_price: total,
+                payment_id: response.razorpay_payment_id,
+                payment_status: "Paid",
+                delivery_address: `${address.name}, ${address.address}, ${address.city} - ${address.pincode}`,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+              }
+            );
 
-  } catch (error) {
-    console.log(error);
-    alert("Verification failed.");
-  }
-},
+            // Clear Cart
+            clearCart();
+
+            // Success Message
+            alert("🎉 Order Placed Successfully!");
+
+            // Redirect
+            navigate("/success");
+
+          } catch (error) {
+            console.error(error);
+            alert("Failed to save order.");
+          }
+        },
 
         prefill: {
           name: address.name,
@@ -100,14 +123,15 @@ handler: async function (response) {
       const razorpay = new window.Razorpay(options);
 
       razorpay.on("payment.failed", function (response) {
-        alert("Payment Failed");
+        console.error(response.error);
 
-        console.log(response.error);
+        alert("❌ Payment Failed");
       });
 
       razorpay.open();
+
     } catch (error) {
-      console.log(error);
+      console.error(error);
 
       alert("Unable to initiate payment.");
     }
@@ -180,17 +204,17 @@ handler: async function (response) {
               {item.name} × {item.quantity}
             </span>
 
-            <span>₹{item.price * item.quantity}</span>
+            <span>
+              ₹{(item.price * item.quantity).toFixed(2)}
+            </span>
           </div>
         ))}
 
         <hr />
 
         <p>Subtotal: ₹{subtotal.toFixed(2)}</p>
-
-        <p>Delivery: ₹{delivery}</p>
-
-        <p>GST: ₹{gst.toFixed(2)}</p>
+        <p>Delivery: ₹{delivery.toFixed(2)}</p>
+        <p>GST (5%): ₹{gst.toFixed(2)}</p>
 
         <h3>Total: ₹{total.toFixed(2)}</h3>
       </div>

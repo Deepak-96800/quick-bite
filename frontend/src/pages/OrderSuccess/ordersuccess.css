@@ -1,0 +1,44 @@
+.success-page {
+  min-height: 100vh;
+  background: #fff8f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.success-card {
+  background: white;
+  width: 500px;
+  text-align: center;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.success-card h1 {
+  color: #2ecc71;
+  margin-bottom: 20px;
+}
+
+.success-card p {
+  color: #555;
+  font-size: 18px;
+  margin: 12px 0;
+}
+
+.home-btn {
+  margin-top: 25px;
+  padding: 12px 30px;
+  border: none;
+  background: #E23744;
+  color: white;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.home-btn:hover {
+  background: #c72b38;
+}
