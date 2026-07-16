@@ -59,17 +59,29 @@ function Checkout() {
         image: "/logo.png",
         order_id: order.id,
 
-        handler: async function (response) {
-          console.log("Payment Success:", response);
+handler: async function (response) {
+  try {
+    const verify = await axios.post(
+      "https://quick-bite-backend-g4k9.onrender.com/payment/verify-payment",
+      response
+    );
 
-          alert("🎉 Payment Successful!");
+    if (verify.data.success) {
+      alert("✅ Payment Verified Successfully!");
 
-          // NEXT STEP
-          // Verify payment
-          // Save order
-          // Clear cart
-          // Navigate to success page
-        },
+      // Next step:
+      // Save order
+      // Clear cart
+      // Redirect to Success page
+    } else {
+      alert("Payment verification failed.");
+    }
+
+  } catch (error) {
+    console.log(error);
+    alert("Verification failed.");
+  }
+},
 
         prefill: {
           name: address.name,
