@@ -131,10 +131,15 @@ function Checkout() {
       razorpay.open();
 
     } catch (error) {
-      console.error(error);
+  console.error("Order Error:", error);
 
-      alert("Unable to initiate payment.");
-    }
+  if (error.response) {
+    console.log(error.response.data);
+    alert(JSON.stringify(error.response.data));
+  } else {
+    alert(error.message);
+  }
+}
   };
 
   return (
