@@ -26,7 +26,6 @@ function Checkout() {
   const total = subtotal + delivery + gst;
 
   const handlePayment = async () => {
-    // Validate Address
     if (
       !address.name ||
       !address.phone ||
@@ -63,13 +62,13 @@ function Checkout() {
 
         handler: async function (response) {
           try {
-            // Verify Payment
-            const verify = await axios.post(
+            // Verify Razorpay Payment
+            const { data: verify } = await axios.post(
               `${import.meta.env.VITE_API_URL}/payment/verify-payment`,
               response
             );
 
-            if (!verify.data.success) {
+            if (!verify.success) {
               alert("Payment verification failed.");
               return;
             }
@@ -82,7 +81,7 @@ function Checkout() {
                 total_price: total,
                 payment_id: response.razorpay_payment_id,
                 payment_status: "Paid",
-                delivery_address: `${address.name}, ${address.address}, ${address.city} - ${address.pincode}`,
+                delivery_address: `${address.name}, ${address.phone}, ${address.address}, ${address.city} - ${address.pincode}`,
               },
               {
                 headers: {
@@ -94,15 +93,16 @@ function Checkout() {
             // Clear Cart
             clearCart();
 
-            // Success Message
-            alert("🎉 Order Placed Successfully!");
-
-            // Redirect
-            navigate("/success");
-
+            // Redirect to Success Page
+            navigate("/order-success");
           } catch (error) {
-            console.error(error);
-            alert("Failed to save order.");
+            console.error("Order Save Error:", error);
+
+            alert(
+              error.response?.data?.message ||
+                error.response?.data?.error ||
+                "Failed to save order."
+            );
           }
         },
 
@@ -129,14 +129,15 @@ function Checkout() {
       });
 
       razorpay.open();
-
     } catch (error) {
-  console.log("Status:", error.response?.status);
-  console.log("Response:", error.response?.data);
-  console.log(error);
+      console.error("Payment Error:", error);
 
-  alert(JSON.stringify(error.response?.data));
-}
+      alert(
+        error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Unable to initiate payment."
+      );
+    }
   };
 
   return (
