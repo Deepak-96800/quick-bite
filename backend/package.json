@@ -6,9 +6,9 @@
   "scripts": {
     "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "engines": {
+    "node": "20.x"
+  },
   "type": "commonjs",
   "dependencies": {
     "bcrypt": "^6.0.0",
