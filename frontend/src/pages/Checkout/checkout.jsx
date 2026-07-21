@@ -46,7 +46,7 @@ function Checkout() {
     try {
       // Create Razorpay Order
       const { data: order } = await axios.post(
-        "https://quick-bite-backend-g4k9.onrender.com/payment/create-order",
+        `${import.meta.env.VITE_API_URL}/payment/create-order`,
         {
           amount: total,
         }
@@ -65,7 +65,7 @@ function Checkout() {
           try {
             // Verify Payment
             const verify = await axios.post(
-              "https://quick-bite-backend-g4k9.onrender.com/payment/verify-payment",
+              `${import.meta.env.VITE_API_URL}/payment/verify-payment`,
               response
             );
 
@@ -76,7 +76,7 @@ function Checkout() {
 
             // Save Order
             await axios.post(
-              "https://quick-bite-backend-g4k9.onrender.com/order",
+              `${import.meta.env.VITE_API_URL}/order`,
               {
                 items: cartItems,
                 total_price: total,

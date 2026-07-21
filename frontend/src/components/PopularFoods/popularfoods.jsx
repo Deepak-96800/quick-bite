@@ -13,7 +13,7 @@ function PopularFoods() {
 
   useEffect(() => {
     axios
-      .get("https://quick-bite-backend-g4k9.onrender.com/foods")
+      .get(`${import.meta.env.VITE_API_URL}/foods`)
       .then((res) => {
         setFoods(res.data);
       })

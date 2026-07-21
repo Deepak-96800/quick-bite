@@ -10,7 +10,7 @@ function Login() {
   const handleLogin = async () => {
     try {
       const res = await axios.post(
-        "https://quick-bite-backend-g4k9.onrender.com/login",
+        `${import.meta.env.VITE_API_URL}/login`,
         data
       );
 
