@@ -38,6 +38,10 @@
   transition: .3s;
 }
 
+.nav-links li a {
+  text-decoration: none;
+}
+
 .nav-links li:hover {
   color: #E23744;
 }
