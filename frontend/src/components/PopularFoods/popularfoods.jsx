@@ -11,7 +11,7 @@ function PopularFoods() {
 
   const { addToCart } = useContext(CartContext);
 
-console.log(import.meta.env.VITE_API_URL);
+// console.log(import.meta.env.VITE_API_URL);
 
   useEffect(() => {
     axios
