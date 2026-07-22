@@ -1,44 +1,56 @@
-.success-page {
+.success-container {
   min-height: 100vh;
-  background: #fff8f5;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  background: #f8f8f8;
 }
 
 .success-card {
   background: white;
-  width: 500px;
-  text-align: center;
-  padding: 40px;
+  padding: 50px;
   border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,.1);
+  max-width: 500px;
+}
+
+.success-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
 }
 
 .success-card h1 {
-  color: #2ecc71;
-  margin-bottom: 20px;
+  color: #2e7d32;
+  margin-bottom: 15px;
 }
 
 .success-card p {
   color: #555;
-  font-size: 18px;
-  margin: 12px 0;
+  margin: 10px 0;
 }
 
-.home-btn {
-  margin-top: 25px;
-  padding: 12px 30px;
-  border: none;
+.success-buttons {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 12px 22px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.btn-primary {
   background: #E23744;
   color: white;
-  font-size: 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.3s;
 }
 
-.home-btn:hover {
-  background: #c72b38;
+.btn-secondary {
+  background: #eee;
+  color: #333;
 }

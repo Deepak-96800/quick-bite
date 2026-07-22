@@ -3,23 +3,29 @@ import "./ordersuccess.css";
 
 function OrderSuccess() {
   return (
-    <div className="success-page">
+    <div className="success-container">
       <div className="success-card">
-        <h1>🎉 Order Placed Successfully!</h1>
+        <div className="success-icon">✅</div>
+
+        <h1>Order Placed Successfully!</h1>
 
         <p>
-          Thank you for ordering from <strong>Quick Bite</strong>.
+          Thank you for ordering with <strong>Quick Bite</strong>.
         </p>
 
-        <p>Your payment was successful.</p>
+        <p>
+          Your payment has been received and your order is being prepared.
+        </p>
 
-        <p>Your food is now being prepared. 🍕🍔🍟</p>
+        <div className="success-buttons">
+          <Link to="/my-orders" className="btn-primary">
+            View My Orders
+          </Link>
 
-        <Link to="/">
-          <button className="home-btn">
+          <Link to="/" className="btn-secondary">
             Continue Shopping
-          </button>
-        </Link>
+          </Link>
+        </div>
       </div>
     </div>
   );
