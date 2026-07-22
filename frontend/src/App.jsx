@@ -4,8 +4,8 @@ import Home from "./pages/home";
 import Cart from "./pages/Cart/cart";
 import Checkout from "./pages/Checkout/checkout";
 import OrderSuccess from "./pages/OrderSuccess/ordersuccess";
-import Login from "./pages/login";
-import Register from "./pages/register";
+import Login from "./pages/Login/login";
+import Register from "./pages/Register/register";
 
 function App() {
   return (
