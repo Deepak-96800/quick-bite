@@ -5,8 +5,15 @@ import { FaShoppingCart, FaUserCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 function Navbar() {
-
   const { cartItems } = useContext(CartContext);
+
+  const token = localStorage.getItem("token");
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "/";
+  };
 
   return (
     <nav className="navbar">
@@ -15,24 +22,47 @@ function Navbar() {
       </div>
 
       <ul className="nav-links">
-        <li>Home</li>
-        <li>Menu</li>
-        <li>Offers</li>
-        <li>My Orders</li>
+        <li>
+          <Link to="/">Home</Link>
+        </li>
+
+        <li>
+          <a href="#menu">Menu</a>
+        </li>
+
+        <li>
+          <a href="#offers">Offers</a>
+        </li>
+
+        <li>
+          <Link to="/my-orders">My Orders</Link>
+        </li>
       </ul>
 
       <div className="nav-right">
-<Link to="/cart" className="cart">
-  <FaShoppingCart />
-  <span className="cart-count">
-    {cartItems.reduce((total, item) => total + item.quantity, 0)}
-  </span>
-</Link>
+        <Link to="/cart" className="cart">
+          <FaShoppingCart />
+          <span className="cart-count">
+            {cartItems.reduce(
+              (total, item) => total + item.quantity,
+              0
+            )}
+          </span>
+        </Link>
 
-        <button className="login-btn">
-          <FaUserCircle />
-          Login
-        </button>
+        {!token ? (
+          <Link to="/login" className="login-btn">
+            <FaUserCircle />
+            <span style={{ marginLeft: "6px" }}>Login</span>
+          </Link>
+        ) : (
+          <button
+            className="login-btn"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+        )}
       </div>
     </nav>
   );
