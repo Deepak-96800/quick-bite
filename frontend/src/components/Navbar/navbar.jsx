@@ -34,9 +34,11 @@ function Navbar() {
           <a href="#offers">Offers</a>
         </li>
 
-        <li>
-          <Link to="/my-orders">My Orders</Link>
-        </li>
+        {token && (
+          <li>
+            <Link to="/my-orders">My Orders</Link>
+          </li>
+        )}
       </ul>
 
       <div className="nav-right">
@@ -51,10 +53,16 @@ function Navbar() {
         </Link>
 
         {!token ? (
-          <Link to="/login" className="login-btn">
-            <FaUserCircle />
-            <span style={{ marginLeft: "6px" }}>Login</span>
-          </Link>
+          <>
+            <Link to="/login" className="login-btn">
+              <FaUserCircle />
+              <span style={{ marginLeft: "6px" }}>Login</span>
+            </Link>
+
+            <Link to="/register" className="register-btn">
+              Register
+            </Link>
+          </>
         ) : (
           <button
             className="login-btn"

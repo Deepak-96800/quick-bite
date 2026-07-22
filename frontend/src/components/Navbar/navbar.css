@@ -36,6 +36,7 @@
   font-size: 17px;
   font-weight: 500;
   transition: .3s;
+  color: #000;
 }
 
 .nav-links li a {
@@ -85,8 +86,26 @@
   align-items: center;
   font-size: 15px;
   transition: .3s;
+  text-decoration: none;
 }
 
 .login-btn:hover {
   background: #c62839;
+}
+
+.register-btn {
+  margin-left: 12px;
+  padding: 10px 20px;
+  background: transparent;
+  border: 2px solid #E23744;
+  color: #E23744;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.register-btn:hover {
+  background: #E23744;
+  color: white;
 }
