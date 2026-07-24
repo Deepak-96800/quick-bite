@@ -229,6 +229,48 @@ app.get("/my-orders", authMiddleware, async (req, res) => {
 });
 
 /* ===========================
+   Admin Dashboard
+=========================== */
+app.get("/admin/dashboard", authMiddleware, async (req, res) => {
+  try {
+    // Allow only admins
+    if (!req.user.is_admin) {
+      return res.status(403).json({
+        message: "Admin access only",
+      });
+    }
+
+    const foods = await db.query(
+      "SELECT COUNT(*) FROM foods"
+    );
+
+    const users = await db.query(
+      "SELECT COUNT(*) FROM users"
+    );
+
+    const orders = await db.query(
+      "SELECT COUNT(*) FROM orders"
+    );
+
+    const revenue = await db.query(
+      "SELECT COALESCE(SUM(total_price),0) FROM orders WHERE payment_status='Paid'"
+    );
+
+    res.json({
+      totalFoods: Number(foods.rows[0].count),
+      totalUsers: Number(users.rows[0].count),
+      totalOrders: Number(orders.rows[0].count),
+      totalRevenue: Number(revenue.rows[0].coalesce),
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+});
+
+/* ===========================
    Home
 =========================== */
 app.get("/", (req, res) => {

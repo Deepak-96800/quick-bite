@@ -1,29 +1,67 @@
 import "./dashboard.css";
-import { FaHamburger, FaUsers, FaClipboardList, FaRupeeSign } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  FaHamburger,
+  FaUsers,
+  FaClipboardList,
+  FaRupeeSign,
+} from "react-icons/fa";
 
 function AdminDashboard() {
-  const stats = [
+  const [stats, setStats] = useState({
+    totalFoods: 0,
+    totalUsers: 0,
+    totalOrders: 0,
+    totalRevenue: 0,
+  });
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/admin/dashboard`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem(
+                "token"
+              )}`,
+            },
+          }
+        );
+
+        setStats(res.data);
+      } catch (error) {
+        console.log(error);
+        alert("Unable to load dashboard.");
+      }
+    };
+
+    fetchDashboard();
+  }, []);
+
+  const cards = [
     {
       title: "Foods",
-      value: "0",
+      value: stats.totalFoods,
       icon: <FaHamburger />,
       color: "#FF9800",
     },
     {
       title: "Users",
-      value: "0",
+      value: stats.totalUsers,
       icon: <FaUsers />,
       color: "#2196F3",
     },
     {
       title: "Orders",
-      value: "0",
+      value: stats.totalOrders,
       icon: <FaClipboardList />,
       color: "#4CAF50",
     },
     {
       title: "Revenue",
-      value: "₹0",
+      value: `₹${stats.totalRevenue}`,
       icon: <FaRupeeSign />,
       color: "#E23744",
     },
@@ -44,14 +82,16 @@ function AdminDashboard() {
       </aside>
 
       <main className="dashboard-content">
-        <h1>Admin Dashboard</h1>
+        <h1>Dashboard</h1>
 
         <div className="stats-grid">
-          {stats.map((card, index) => (
+          {cards.map((card, index) => (
             <div className="stat-card" key={index}>
               <div
                 className="icon"
-                style={{ background: card.color }}
+                style={{
+                  background: card.color,
+                }}
               >
                 {card.icon}
               </div>
