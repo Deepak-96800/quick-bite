@@ -1,13 +1,19 @@
 import "./navbar.css";
 import { useContext } from "react";
 import { CartContext } from "../../context/cartcontext";
-import { FaShoppingCart, FaUserCircle } from "react-icons/fa";
+import {
+  FaShoppingCart,
+  FaUserCircle,
+  FaUserShield,
+} from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 function Navbar() {
   const { cartItems } = useContext(CartContext);
 
   const token = localStorage.getItem("token");
+
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -39,6 +45,16 @@ function Navbar() {
             <Link to="/my-orders">My Orders</Link>
           </li>
         )}
+
+        {/* Admin Link */}
+        {user?.is_admin && (
+          <li>
+            <Link to="/admin">
+              <FaUserShield style={{ marginRight: "5px" }} />
+              Admin
+            </Link>
+          </li>
+        )}
       </ul>
 
       <div className="nav-right">
@@ -56,7 +72,9 @@ function Navbar() {
           <>
             <Link to="/login" className="login-btn">
               <FaUserCircle />
-              <span style={{ marginLeft: "6px" }}>Login</span>
+              <span style={{ marginLeft: "6px" }}>
+                Login
+              </span>
             </Link>
 
             <Link to="/register" className="register-btn">

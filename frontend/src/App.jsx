@@ -7,6 +7,7 @@ import OrderSuccess from "./pages/OrderSuccess/ordersuccess";
 import Login from "./pages/Login/login";
 import Register from "./pages/Register/register";
 import MyOrders from "./pages/MyOrders/myorders";
+import AdminDashboard from "./pages/Admin/dashboard";
 
 function App() {
   return (
@@ -18,7 +19,8 @@ function App() {
         <Route path="/order-success" element={<OrderSuccess />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/my-orders" element={<MyOrders />} />        
+        <Route path="/my-orders" element={<MyOrders />} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </BrowserRouter>
   );
