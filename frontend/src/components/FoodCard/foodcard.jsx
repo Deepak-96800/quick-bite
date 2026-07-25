@@ -7,8 +7,11 @@ function FoodCard({ food, addToCart }) {
       <div className="favorite">❤</div>
 
       <img
-        src={food.image}
+        src={`${import.meta.env.VITE_API_URL}/${food.image}`}
         alt={food.name}
+        onError={(e) => {
+          e.target.src = "https://via.placeholder.com/300x200?text=No+Image";
+        }}
       />
 
       <div className="food-content">
