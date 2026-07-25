@@ -22,6 +22,37 @@ function Foods() {
     }
   };
 
+const deleteFood = async (id) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this food?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+    await axios.delete(
+      `${import.meta.env.VITE_API_URL}/food/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    alert("✅ Food Deleted");
+
+    fetchFoods();
+
+  } catch (error) {
+    console.log(error);
+
+    alert(
+      error.response?.data?.message ||
+      "Unable to delete food."
+    );
+  }
+};
+
   return (
     <div className="foods-page">
 
@@ -66,9 +97,7 @@ function Foods() {
 
                 <Link to={`/admin/edit-food/${food.id}`} className="edit">Edit</Link>
 
-                <button className="delete">
-                  Delete
-                </button>
+                <button className="delete" onClick={() => deleteFood(food.id)}>Delete</button>
 
               </td>
 

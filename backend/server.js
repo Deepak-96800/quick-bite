@@ -223,6 +223,35 @@ app.get("/food/:id", async (req, res) => {
 });
 
 /* ===========================
+   Delete Food
+=========================== */
+app.delete("/food/:id", authMiddleware, async (req, res) => {
+  if (!req.user.is_admin) {
+    return res.status(403).json({
+      message: "Admin access only",
+    });
+  }
+
+  try {
+    await db.query(
+      "DELETE FROM foods WHERE id = $1",
+      [req.params.id]
+    );
+
+    res.json({
+      success: true,
+      message: "Food deleted successfully",
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/* ===========================
    Get Foods
 =========================== */
 app.get("/foods", async (req, res) => {
