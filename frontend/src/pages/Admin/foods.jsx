@@ -29,7 +29,7 @@ function Foods() {
         <h1>Food Management</h1>
 
         <Link to="/admin/add-food" className="add-btn">+ Add Food</Link>
-        
+
       </div>
 
       <table>
@@ -53,7 +53,7 @@ function Foods() {
 
               <td>
                 <img
-                  src={food.image}
+                  src={`${import.meta.env.VITE_API_URL}/${food.image}`}
                   alt={food.name}
                 />
               </td>
