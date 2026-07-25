@@ -26,7 +26,7 @@ function App() {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/foods" element={<Foods />}/>
         <Route path="/admin/add-food" element={<AddFood />}/>
-        <Route path="edit-food/:id" element={<EditFood />}/>
+        <Route path="/admin/edit-food/:id" element={<EditFood />}/>
       </Routes>
     </BrowserRouter>
   );
