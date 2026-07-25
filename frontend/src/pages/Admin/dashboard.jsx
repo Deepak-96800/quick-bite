@@ -1,5 +1,6 @@
 import "./dashboard.css";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import {
   FaHamburger,
@@ -69,17 +70,40 @@ function AdminDashboard() {
 
   return (
     <div className="admin-page">
-      <aside className="sidebar">
-        <h2>🍔 Quick Bite</h2>
 
-        <ul>
-          <li>Dashboard</li>
-          <li>Foods</li>
-          <li>Orders</li>
-          <li>Users</li>
-          <li>Logout</li>
-        </ul>
-      </aside>
+<aside className="sidebar">
+  <h2>🍔 Quick Bite</h2>
+
+  <ul>
+    <li>
+      <Link to="/admin">Dashboard</Link>
+    </li>
+
+    <li>
+      <Link to="/admin/foods">Foods</Link>
+    </li>
+
+    <li>
+      <Link to="/admin/orders">Orders</Link>
+    </li>
+
+    <li>
+      <Link to="/admin/users">Users</Link>
+    </li>
+
+    <li>
+      <Link
+        to="/"
+        onClick={() => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+        }}
+      >
+        Logout
+      </Link>
+    </li>
+  </ul>
+</aside>
 
       <main className="dashboard-content">
         <h1>Dashboard</h1>

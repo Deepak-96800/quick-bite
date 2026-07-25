@@ -21,18 +21,25 @@
     margin-bottom:40px;
 }
 
-.sidebar ul{
-    list-style:none;
+.sidebar ul {
+  list-style: none;
+  padding: 0;
 }
 
-.sidebar li{
-    padding:15px 0;
-    cursor:pointer;
-    transition:.3s;
+.sidebar li {
+  margin: 18px 0;
 }
 
-.sidebar li:hover{
-    padding-left:10px;
+.sidebar li a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  font-size: 22px;
+  transition: 0.3s;
+}
+
+.sidebar li a:hover {
+  padding-left: 10px;
 }
 
 .dashboard-content{
