@@ -28,12 +28,8 @@ function Foods() {
       <div className="foods-header">
         <h1>Food Management</h1>
 
-        <Link
-          to="/admin/add-food"
-          className="add-btn"
-        >
-          + Add Food
-        </Link>
+        <Link to="/admin/add-food" className="add-btn">+ Add Food</Link>
+        
       </div>
 
       <table>

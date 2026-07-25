@@ -121,13 +121,25 @@ app.get("/profile", authMiddleware, (req, res) => {
 /* ===========================
    Add Food
 =========================== */
-app.post("/add-food", async (req, res) => {
-  const { name, price, image } = req.body;
+app.post("/add-food", authMiddleware, async (req, res) => {
+  const {
+    name,
+    price,
+    image,
+    description,
+  } = req.body;
 
   try {
     await db.query(
-      "INSERT INTO foods (name, price, image) VALUES ($1, $2, $3)",
-      [name, price, image]
+      `INSERT INTO foods
+      (name, price, image, description)
+      VALUES ($1,$2,$3,$4)`,
+      [
+        name,
+        price,
+        image,
+        description,
+      ]
     );
 
     res.json({
