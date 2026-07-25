@@ -163,6 +163,66 @@ app.post("/add-food", authMiddleware, async (req, res) => {
 });
 
 /* ===========================
+   Update Food
+=========================== */
+app.put("/food/:id", authMiddleware, async (req, res) => {
+  if (!req.user.is_admin) {
+    return res.status(403).json({
+      message: "Admin access only",
+    });
+  }
+
+  const { id } = req.params;
+  const { name, price, image, description } = req.body;
+
+  try {
+    await db.query(
+      `UPDATE foods
+       SET name=$1,
+           price=$2,
+           image=$3,
+           description=$4
+       WHERE id=$5`,
+      [name, price, image, description, id]
+    );
+
+    res.json({
+      success: true,
+      message: "Food updated successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/* ===========================
+   Get Single Food
+=========================== */
+app.get("/food/:id", async (req, res) => {
+  try {
+    const result = await db.query(
+      "SELECT * FROM foods WHERE id=$1",
+      [req.params.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        message: "Food not found",
+      });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+});
+
+/* ===========================
    Get Foods
 =========================== */
 app.get("/foods", async (req, res) => {

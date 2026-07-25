@@ -64,9 +64,7 @@ function Foods() {
 
               <td>
 
-                <button className="edit">
-                  Edit
-                </button>
+                <Link to={`/admin/edit-food/${food.id}`} className="edit">Edit</Link>
 
                 <button className="delete">
                   Delete
