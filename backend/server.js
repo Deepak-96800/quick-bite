@@ -244,10 +244,15 @@ app.delete("/food/:id", authMiddleware, async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+  console.log("Delete Error:", error);
+  console.log("Status:", error.response?.status);
+  console.log("Response:", error.response?.data);
+
+  alert(
+    error.response?.data?.error ||
+    error.response?.data?.message ||
+    "Unable to delete food."
+  );
   }
 });
 
