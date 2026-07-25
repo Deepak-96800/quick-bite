@@ -8,6 +8,7 @@ import Login from "./pages/Login/login";
 import Register from "./pages/Register/register";
 import MyOrders from "./pages/MyOrders/myorders";
 import AdminDashboard from "./pages/Admin/dashboard";
+import Foods from "./pages/Admin/foods";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/my-orders" element={<MyOrders />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/foods" element={<Foods />}/>
       </Routes>
     </BrowserRouter>
   );
