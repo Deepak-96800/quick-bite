@@ -342,6 +342,44 @@ app.get("/my-orders", authMiddleware, async (req, res) => {
 });
 
 /* ===========================
+   Admin - Get All Orders
+=========================== */
+app.get("/admin/orders", authMiddleware, async (req, res) => {
+  try {
+    if (!req.user.is_admin) {
+      return res.status(403).json({
+        success: false,
+        message: "Admin access only",
+      });
+    }
+
+    const result = await db.query(`
+      SELECT
+        orders.*,
+        users.name,
+        users.email
+      FROM orders
+      INNER JOIN users
+      ON orders.user_id = users.id
+      ORDER BY orders.created_at DESC
+    `);
+
+    res.json({
+      success: true,
+      orders: result.rows,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/* ===========================
    Admin Dashboard
 =========================== */
 app.get("/admin/dashboard", authMiddleware, async (req, res) => {
