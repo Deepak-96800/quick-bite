@@ -228,31 +228,37 @@ app.get("/food/:id", async (req, res) => {
 app.delete("/food/:id", authMiddleware, async (req, res) => {
   if (!req.user.is_admin) {
     return res.status(403).json({
+      success: false,
       message: "Admin access only",
     });
   }
 
   try {
-    await db.query(
-      "DELETE FROM foods WHERE id = $1",
+    const result = await db.query(
+      "DELETE FROM foods WHERE id = $1 RETURNING *",
       [req.params.id]
     );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Food not found",
+      });
+    }
 
     res.json({
       success: true,
       message: "Food deleted successfully",
+      food: result.rows[0],
     });
 
   } catch (error) {
-  console.log("Delete Error:", error);
-  console.log("Status:", error.response?.status);
-  console.log("Response:", error.response?.data);
+    console.error("Delete Food Error:", error);
 
-  alert(
-    error.response?.data?.error ||
-    error.response?.data?.message ||
-    "Unable to delete food."
-  );
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
 });
 
@@ -377,7 +383,7 @@ app.get("/admin/orders", authMiddleware, async (req, res) => {
       error: error.message,
     });
   }
-});
+}); 
 
 /* ===========================
    Admin Dashboard
