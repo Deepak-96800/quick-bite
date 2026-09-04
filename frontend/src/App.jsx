@@ -11,6 +11,7 @@ import AdminDashboard from "./pages/Admin/dashboard";
 import Foods from "./pages/Admin/foods";
 import AddFood from "./pages/Admin/addfood";
 import EditFood from "./pages/Admin/editfood";
+import Orders from "./pages/Admin/orders";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/admin/foods" element={<Foods />}/>
         <Route path="/admin/add-food" element={<AddFood />}/>
         <Route path="/admin/edit-food/:id" element={<EditFood />}/>
+        <Route path="/admin/orders" element={<Orders />} />
       </Routes>
     </BrowserRouter>
   );

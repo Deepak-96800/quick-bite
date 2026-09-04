@@ -1,0 +1,409 @@
+/* ===========================
+   Admin Orders Page
+=========================== */
+
+.orders-page {
+  min-height: 100vh;
+  padding: 35px;
+  background: #f7f8fa;
+  font-family: Arial, sans-serif;
+}
+
+
+/* ===========================
+   Header
+=========================== */
+
+.orders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.orders-header h1 {
+  margin: 0;
+  font-size: 30px;
+  color: #222;
+}
+
+.orders-header p {
+  margin-top: 8px;
+  color: #777;
+  font-size: 14px;
+}
+
+.order-count {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  background: white;
+  padding: 14px 20px;
+  border-radius: 12px;
+
+  color: #e23744;
+  font-weight: 600;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+}
+
+
+/* ===========================
+   Table Container
+=========================== */
+
+.orders-table-container {
+  background: white;
+  border-radius: 16px;
+
+  overflow-x: auto;
+
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.06);
+}
+
+
+/* ===========================
+   Table
+=========================== */
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1100px;
+}
+
+.orders-table th {
+  background: #fafafa;
+
+  padding: 18px 16px;
+
+  text-align: left;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #555;
+
+  border-bottom: 1px solid #eee;
+}
+
+.orders-table td {
+  padding: 17px 16px;
+
+  border-bottom: 1px solid #f0f0f0;
+
+  font-size: 14px;
+
+  color: #444;
+}
+
+.orders-table tbody tr {
+  transition: 0.2s;
+}
+
+.orders-table tbody tr:hover {
+  background: #fff8f8;
+}
+
+
+/* ===========================
+   Order ID
+=========================== */
+
+.order-id {
+  font-weight: 700;
+  color: #e23744;
+}
+
+
+/* ===========================
+   Customer
+=========================== */
+
+.customer-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.customer-icon {
+  width: 38px;
+  height: 38px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #fff0f1;
+  color: #e23744;
+}
+
+.customer-info strong {
+  display: block;
+  color: #222;
+  font-size: 14px;
+}
+
+.customer-info small {
+  display: block;
+  margin-top: 4px;
+  color: #888;
+  font-size: 12px;
+}
+
+
+/* ===========================
+   Items
+=========================== */
+
+.items-count {
+  background: #f5f5f5;
+
+  padding: 7px 11px;
+
+  border-radius: 20px;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+
+/* ===========================
+   Total
+=========================== */
+
+.order-total {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+
+  font-weight: 700;
+
+  color: #222;
+}
+
+
+/* ===========================
+   Status Badge
+=========================== */
+
+.status-badge {
+  display: inline-block;
+
+  padding: 7px 12px;
+
+  border-radius: 20px;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  text-transform: capitalize;
+}
+
+
+/* Payment */
+
+.status-badge.paid {
+  background: #e9f9ef;
+  color: #1c8c4c;
+}
+
+.status-badge.failed {
+  background: #ffe9e9;
+  color: #d32f2f;
+}
+
+.status-badge.pending {
+  background: #fff4df;
+  color: #b77900;
+}
+
+
+/* ===========================
+   Order Status
+=========================== */
+
+.status-badge.pending {
+  background: #fff4df;
+  color: #b77900;
+}
+
+.status-badge.confirmed {
+  background: #e8f0ff;
+  color: #2864d7;
+}
+
+.status-badge.preparing {
+  background: #fff0df;
+  color: #d97706;
+}
+
+.status-badge.out-for-delivery {
+  background: #e8f7ff;
+  color: #087ea4;
+}
+
+.status-badge.delivered {
+  background: #e9f9ef;
+  color: #1c8c4c;
+}
+
+.status-badge.cancelled {
+  background: #ffe9e9;
+  color: #d32f2f;
+}
+
+
+/* ===========================
+   Date
+=========================== */
+
+.date-info {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #777;
+
+  font-size: 12px;
+}
+
+.date-info svg {
+  color: #e23744;
+}
+
+
+/* ===========================
+   View Button
+=========================== */
+
+.view-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  border: none;
+
+  background: #fff0f1;
+
+  color: #e23744;
+
+  padding: 9px 14px;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  font-weight: 600;
+
+  transition: 0.2s;
+}
+
+.view-btn:hover {
+  background: #e23744;
+  color: white;
+}
+
+
+/* ===========================
+   Empty State
+=========================== */
+
+.no-orders {
+  background: white;
+
+  border-radius: 16px;
+
+  padding: 80px 20px;
+
+  text-align: center;
+
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+}
+
+.no-orders svg {
+  font-size: 55px;
+  color: #e23744;
+  margin-bottom: 15px;
+}
+
+.no-orders h2 {
+  margin: 5px 0;
+
+  color: #333;
+}
+
+.no-orders p {
+  color: #888;
+}
+
+
+/* ===========================
+   Loading
+=========================== */
+
+.orders-loading {
+  min-height: 70vh;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+
+  color: #777;
+}
+
+.loader {
+  width: 40px;
+  height: 40px;
+
+  border: 4px solid #eee;
+  border-top: 4px solid #e23744;
+
+  border-radius: 50%;
+
+  animation: spin 0.8s linear infinite;
+
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ===========================
+   Responsive
+=========================== */
+
+@media (max-width: 768px) {
+
+  .orders-page {
+    padding: 20px;
+  }
+
+  .orders-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .orders-header h1 {
+    font-size: 24px;
+  }
+
+  .order-count {
+    width: 100%;
+    justify-content: center;
+  }
+
+}

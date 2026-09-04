@@ -1,0 +1,281 @@
+import "./orders.css";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  FaEye,
+  FaUser,
+  FaRupeeSign,
+  FaCalendarAlt,
+  FaBoxOpen,
+} from "react-icons/fa";
+
+function Orders() {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchOrders = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/admin/orders`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setOrders(res.data.orders || []);
+    } catch (error) {
+      console.error("Fetch Orders Error:", error);
+
+      alert(
+        error.response?.data?.message ||
+          "Unable to load orders."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  // Safely parse order items
+  const parseItems = (items) => {
+    if (Array.isArray(items)) return items;
+
+    if (!items) return [];
+
+    try {
+      return JSON.parse(items);
+    } catch (error) {
+      console.error("Items Parse Error:", error);
+      return [];
+    }
+  };
+
+  // Get number of items
+  const getItemCount = (items) => {
+    const parsedItems = parseItems(items);
+
+    return parsedItems.reduce(
+      (total, item) => total + Number(item.quantity || 1),
+      0
+    );
+  };
+
+  // Format date
+  const formatDate = (date) => {
+    if (!date) return "-";
+
+    return new Date(date).toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  // Payment status class
+  const getPaymentClass = (status) => {
+    if (!status) return "pending";
+
+    const value = status.toLowerCase();
+
+    if (value === "paid" || value === "success") {
+      return "paid";
+    }
+
+    if (value === "failed") {
+      return "failed";
+    }
+
+    return "pending";
+  };
+
+  // Order status class
+  const getOrderStatusClass = (status) => {
+    if (!status) return "pending";
+
+    return status.toLowerCase().replace(/\s+/g, "-");
+  };
+
+  if (loading) {
+    return (
+      <div className="orders-page">
+        <div className="orders-loading">
+          <div className="loader"></div>
+          <p>Loading orders...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="orders-page">
+
+      {/* Header */}
+      <div className="orders-header">
+
+        <div>
+          <h1>Order Management</h1>
+          <p>Manage and monitor customer orders</p>
+        </div>
+
+        <div className="order-count">
+          <FaBoxOpen />
+          <span>{orders.length} Orders</span>
+        </div>
+
+      </div>
+
+      {/* Empty Orders */}
+      {orders.length === 0 ? (
+        <div className="no-orders">
+          <FaBoxOpen />
+          <h2>No Orders Found</h2>
+          <p>There are currently no customer orders.</p>
+        </div>
+      ) : (
+
+        /* Orders Table */
+        <div className="orders-table-container">
+
+          <table className="orders-table">
+
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Payment</th>
+                <th>Order Status</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              {orders.map((order) => (
+
+                <tr key={order.id}>
+
+                  {/* Order ID */}
+                  <td>
+                    <span className="order-id">
+                      #{order.id}
+                    </span>
+                  </td>
+
+                  {/* Customer */}
+                  <td>
+                    <div className="customer-info">
+
+                      <div className="customer-icon">
+                        <FaUser />
+                      </div>
+
+                      <div>
+                        <strong>
+                          {order.name || "Unknown"}
+                        </strong>
+
+                        <small>
+                          {order.email || "-"}
+                        </small>
+                      </div>
+
+                    </div>
+                  </td>
+
+                  {/* Items */}
+                  <td>
+                    <span className="items-count">
+                      {getItemCount(order.items)} Items
+                    </span>
+                  </td>
+
+                  {/* Total */}
+                  <td>
+                    <span className="order-total">
+                      <FaRupeeSign />
+                      {Number(order.total_price || 0).toFixed(2)}
+                    </span>
+                  </td>
+
+                  {/* Payment */}
+                  <td>
+                    <span
+                      className={`status-badge ${getPaymentClass(
+                        order.payment_status
+                      )}`}
+                    >
+                      {order.payment_status || "Pending"}
+                    </span>
+                  </td>
+
+                  {/* Order Status */}
+                  <td>
+                    <span
+                      className={`status-badge order-status ${getOrderStatusClass(
+                        order.status
+                      )}`}
+                    >
+                      {order.status || "Pending"}
+                    </span>
+                  </td>
+
+                  {/* Date */}
+                  <td>
+                    <div className="date-info">
+                      <FaCalendarAlt />
+                      <span>
+                        {formatDate(order.created_at)}
+                      </span>
+                    </div>
+                  </td>
+
+                  {/* View */}
+                  <td>
+                    <button
+                      className="view-btn"
+                      onClick={() =>
+                        alert(
+                          `Order #${order.id}\n\nCustomer: ${
+                            order.name
+                          }\nEmail: ${
+                            order.email
+                          }\nTotal: ₹${Number(
+                            order.total_price || 0
+                          ).toFixed(2)}`
+                        )
+                      }
+                    >
+                      <FaEye />
+                      View
+                    </button>
+                  </td>
+
+                </tr>
+
+              ))}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      )}
+
+    </div>
+  );
+}
+
+export default Orders;
