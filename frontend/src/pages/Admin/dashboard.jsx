@@ -1,3 +1,4 @@
+import { ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell, Legend,} from "recharts";
 import "./dashboard.css";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -21,8 +22,17 @@ function AdminDashboard() {
     totalRevenue: 0,
   });
 
-  const [recentOrders, setRecentOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+const [recentOrders, setRecentOrders] = useState([]);
+
+const [analytics, setAnalytics] = useState({
+  todayOrders: 0,
+  todayRevenue: 0,
+  orderStatus: [],
+  revenueLast7Days: [],
+  ordersLast7Days: [],
+});
+
+const [loading, setLoading] = useState(true);
 
   const token = localStorage.getItem("token");
 
@@ -44,8 +54,15 @@ function AdminDashboard() {
           ),
         ]);
 
-        setStats(dashboardRes.data);
+setStats(dashboardRes.data);
 
+setAnalytics({
+  todayOrders: dashboardRes.data.todayOrders || 0,
+  todayRevenue: dashboardRes.data.todayRevenue || 0,
+  orderStatus: dashboardRes.data.orderStatus || [],
+  revenueLast7Days: dashboardRes.data.revenueLast7Days || [],
+  ordersLast7Days: dashboardRes.data.ordersLast7Days || [],
+});
         const orders = ordersRes.data.orders || [];
 
         setRecentOrders(orders.slice(0, 5));
@@ -180,6 +197,187 @@ function AdminDashboard() {
             </div>
           ))}
         </div>
+
+<div className="today-grid">
+
+  <div className="today-card">
+    <div className="today-icon orders">
+      <FaClipboardList />
+    </div>
+
+    <div>
+      <p>Today's Orders</p>
+      <h2>
+        {loading ? "..." : analytics.todayOrders}
+      </h2>
+    </div>
+  </div>
+
+  <div className="today-card">
+    <div className="today-icon revenue">
+      <FaRupeeSign />
+    </div>
+
+    <div>
+      <p>Today's Revenue</p>
+      <h2>
+        {loading
+          ? "..."
+          : `₹${Number(
+              analytics.todayRevenue
+            ).toLocaleString("en-IN")}`}
+      </h2>
+    </div>
+  </div>
+
+</div>
+
+<div className="charts-section">
+
+  {/* REVENUE CHART */}
+  <div className="chart-card">
+
+    <div className="chart-header">
+      <h2>Revenue - Last 7 Days</h2>
+    </div>
+
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart
+        data={analytics.revenueLast7Days}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+
+        <XAxis
+          dataKey="date"
+          tickFormatter={(date) =>
+            new Date(date).toLocaleDateString(
+              "en-IN",
+              {
+                day: "2-digit",
+                month: "short",
+              }
+            )
+          }
+        />
+
+        <YAxis />
+
+        <Tooltip
+          formatter={(value) => [
+            `₹${Number(value).toLocaleString("en-IN")}`,
+            "Revenue",
+          ]}
+        />
+
+        <Line
+          type="monotone"
+          dataKey="revenue"
+          stroke="#E23744"
+          strokeWidth={3}
+          dot={{ r: 5 }}
+        />
+      </LineChart>
+    </ResponsiveContainer>
+
+  </div>
+
+
+  {/* ORDERS CHART */}
+  <div className="chart-card">
+
+    <div className="chart-header">
+      <h2>Orders - Last 7 Days</h2>
+    </div>
+
+    <ResponsiveContainer width="100%" height={300}>
+      <BarChart
+        data={analytics.ordersLast7Days}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+
+        <XAxis
+          dataKey="date"
+          tickFormatter={(date) =>
+            new Date(date).toLocaleDateString(
+              "en-IN",
+              {
+                day: "2-digit",
+                month: "short",
+              }
+            )
+          }
+        />
+
+        <YAxis allowDecimals={false} />
+
+        <Tooltip />
+
+        <Bar
+          dataKey="orders"
+          fill="#176291"
+          radius={[6, 6, 0, 0]}
+        />
+      </BarChart>
+    </ResponsiveContainer>
+
+  </div>
+
+</div>
+
+<div className="status-chart-card">
+
+  <div className="chart-header">
+    <h2>Order Status</h2>
+  </div>
+
+  {analytics.orderStatus.length === 0 ? (
+    <div className="no-chart-data">
+      No order status data available.
+    </div>
+  ) : (
+    <div className="status-chart">
+
+      <ResponsiveContainer width="100%" height={320}>
+        <PieChart>
+
+          <Pie
+            data={analytics.orderStatus}
+            dataKey="count"
+            nameKey="status"
+            cx="50%"
+            cy="50%"
+            outerRadius={110}
+            label
+          >
+            {analytics.orderStatus.map(
+              (entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={[
+                    "#FF9800",
+                    "#2196F3",
+                    "#9C27B0",
+                    "#03A9F4",
+                    "#4CAF50",
+                    "#E23744",
+                  ][index % 6]}
+                />
+              )
+            )}
+          </Pie>
+
+          <Tooltip />
+
+          <Legend />
+
+        </PieChart>
+      </ResponsiveContainer>
+
+    </div>
+  )}
+
+</div>
+
 
         {/* QUICK ACTIONS */}
         <div className="section-header">

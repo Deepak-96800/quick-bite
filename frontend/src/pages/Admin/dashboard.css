@@ -463,3 +463,117 @@
     padding: 15px;
   }
 }
+
+/* ================= TODAY STATS ================= */
+
+.today-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+  margin-bottom: 40px;
+}
+
+.today-card {
+  background: white;
+  padding: 22px 25px;
+  border-radius: 16px;
+
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.today-icon {
+  width: 55px;
+  height: 55px;
+  border-radius: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: white;
+  font-size: 22px;
+}
+
+.today-icon.orders {
+  background: #176291;
+}
+
+.today-icon.revenue {
+  background: #e23744;
+}
+
+.today-card p {
+  color: #777;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.today-card h2 {
+  font-size: 25px;
+  color: #222;
+}
+
+
+/* ================= CHARTS ================= */
+
+.charts-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  margin-bottom: 30px;
+}
+
+.chart-card,
+.status-chart-card {
+  background: white;
+  border-radius: 16px;
+  padding: 25px;
+
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.chart-header {
+  margin-bottom: 20px;
+}
+
+.chart-header h2 {
+  font-size: 19px;
+  color: #222;
+}
+
+.status-chart-card {
+  margin-bottom: 40px;
+}
+
+.status-chart {
+  width: 100%;
+}
+
+.no-chart-data {
+  text-align: center;
+  padding: 60px 20px;
+  color: #888;
+}
+
+
+/* ================= RESPONSIVE CHARTS ================= */
+
+@media (max-width: 900px) {
+
+  .charts-section {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+@media (max-width: 600px) {
+
+  .today-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
