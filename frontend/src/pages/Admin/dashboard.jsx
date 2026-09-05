@@ -681,7 +681,21 @@ useEffect(() => {
             }
           />
 
-          <YAxis />
+  {/* Revenue Axis */}
+  <YAxis
+    yAxisId="revenue"
+    orientation="left"
+    tickFormatter={(value) =>
+      `₹${Number(value).toLocaleString("en-IN")}`
+    }
+  />
+
+    {/* Orders Axis */}
+  <YAxis
+    yAxisId="orders"
+    orientation="right"
+    allowDecimals={false}
+  />
 
           <Tooltip
             formatter={(value, name) => [
@@ -698,21 +712,25 @@ useEffect(() => {
 
           <Legend />
 
-          <Line
-            type="monotone"
-            dataKey="revenue"
-            stroke="#E23744"
-            strokeWidth={3}
-            dot={{ r: 4 }}
-          />
+  <Line
+    type="monotone"
+    dataKey="revenue"
+    name="Revenue"
+    yAxisId="revenue"
+    stroke="#E23744"
+    strokeWidth={3}
+    dot={{ r: 4 }}
+  />
 
-          <Line
-            type="monotone"
-            dataKey="orders"
-            stroke="#176291"
-            strokeWidth={3}
-            dot={{ r: 4 }}
-          />
+  <Line
+    type="monotone"
+    dataKey="orders"
+    name="Orders"
+    yAxisId="orders"
+    stroke="#176291"
+    strokeWidth={3}
+    dot={{ r: 4 }}
+  />
 
         </LineChart>
 
