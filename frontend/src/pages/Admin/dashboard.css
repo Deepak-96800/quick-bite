@@ -577,3 +577,101 @@
   }
 
 }
+
+/* ================= TOP SELLING FOODS ================= */
+
+.top-foods-card {
+  background: white;
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 40px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.top-foods-card .chart-header {
+  margin-bottom: 20px;
+}
+
+.top-foods-card .chart-header p {
+  color: #888;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.top-foods-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.top-food-item {
+  display: flex;
+  align-items: center;
+  padding: 16px 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.top-food-item:last-child {
+  border-bottom: none;
+}
+
+.food-rank {
+  width: 55px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #176291;
+}
+
+.food-info {
+  flex: 1;
+}
+
+.food-info h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #222;
+}
+
+.food-info p {
+  margin-top: 5px;
+  font-size: 13px;
+  color: #888;
+}
+
+.food-revenue {
+  text-align: right;
+}
+
+.food-revenue span {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 4px;
+}
+
+.food-revenue strong {
+  font-size: 16px;
+  color: #e23744;
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 600px) {
+
+  .top-food-item {
+    padding: 14px 5px;
+  }
+
+  .food-rank {
+    width: 40px;
+    font-size: 14px;
+  }
+
+  .food-info h3 {
+    font-size: 14px;
+  }
+
+  .food-revenue strong {
+    font-size: 14px;
+  }
+
+}

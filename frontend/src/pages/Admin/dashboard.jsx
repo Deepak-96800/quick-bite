@@ -30,6 +30,7 @@ const [analytics, setAnalytics] = useState({
   orderStatus: [],
   revenueLast7Days: [],
   ordersLast7Days: [],
+  topSellingFoods: [],
 });
 
 const [loading, setLoading] = useState(true);
@@ -43,16 +44,22 @@ const [loading, setLoading] = useState(true);
           Authorization: `Bearer ${token}`,
         };
 
-        const [dashboardRes, ordersRes] = await Promise.all([
-          axios.get(
-            `${import.meta.env.VITE_API_URL}/admin/dashboard`,
-            { headers }
-          ),
-          axios.get(
-            `${import.meta.env.VITE_API_URL}/admin/orders`,
-            { headers }
-          ),
-        ]);
+const [dashboardRes, ordersRes, topFoodsRes] = await Promise.all([
+  axios.get(
+    `${import.meta.env.VITE_API_URL}/admin/dashboard`,
+    { headers }
+  ),
+
+  axios.get(
+    `${import.meta.env.VITE_API_URL}/admin/orders`,
+    { headers }
+  ),
+
+  axios.get(
+    `${import.meta.env.VITE_API_URL}/admin/top-selling-foods`,
+    { headers }
+  ),
+]);
 
 setStats(dashboardRes.data);
 
@@ -62,6 +69,7 @@ setAnalytics({
   orderStatus: dashboardRes.data.orderStatus || [],
   revenueLast7Days: dashboardRes.data.revenueLast7Days || [],
   ordersLast7Days: dashboardRes.data.ordersLast7Days || [],
+  topSellingFoods: topFoodsRes.data.topSellingFoods || [],  
 });
         const orders = ordersRes.data.orders || [];
 
@@ -381,6 +389,55 @@ setAnalytics({
 
 </div>
 
+{/* ================= TOP SELLING FOODS ================= */}
+
+<div className="top-foods-card">
+
+  <div className="chart-header">
+    <h2>🔥 Top Selling Foods</h2>
+    <p>Most ordered foods</p>
+  </div>
+
+  {analytics.topSellingFoods.length === 0 ? (
+    <div className="no-chart-data">
+      No sales data available.
+    </div>
+  ) : (
+    <div className="top-foods-list">
+
+      {analytics.topSellingFoods.map((food, index) => (
+        <div
+          className="top-food-item"
+          key={`${food.name}-${index}`}
+        >
+
+          <div className="food-rank">
+            #{index + 1}
+          </div>
+
+          <div className="food-info">
+            <h3>{food.name}</h3>
+
+            <p>
+              {food.quantity} orders
+            </p>
+          </div>
+
+          <div className="food-revenue">
+            <span>Revenue</span>
+
+            <strong>
+              ₹{Number(food.revenue).toLocaleString("en-IN")}
+            </strong>
+          </div>
+
+        </div>
+      ))}
+
+    </div>
+  )}
+
+</div>
 
         {/* QUICK ACTIONS */}
         <div className="section-header">
