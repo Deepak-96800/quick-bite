@@ -13,6 +13,7 @@ function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const statuses = [
     "Pending",
@@ -165,6 +166,20 @@ function Orders() {
       .toLowerCase()
       .replace(/\s+/g, "-");
   };
+
+/* ===========================
+   Open Order Details
+=========================== */
+const openOrderDetails = (order) => {
+  setSelectedOrder(order);
+};
+
+/* ===========================
+   Close Order Details
+=========================== */
+const closeOrderDetails = () => {
+  setSelectedOrder(null);
+};
 
   /* ===========================
      Loading
@@ -363,37 +378,13 @@ function Orders() {
                   {/* Action */}
                   <td>
 
-                    <button
-                      className="view-btn"
-                      onClick={() =>
-                        alert(
-                          `Order #${order.id}\n\n` +
-                          `Customer: ${
-                            order.name || "-"
-                          }\n` +
-                          `Email: ${
-                            order.email || "-"
-                          }\n` +
-                          `Total: ₹${Number(
-                            order.total_price || 0
-                          ).toFixed(2)}\n` +
-                          `Payment: ${
-                            order.payment_status ||
-                            "-"
-                          }\n` +
-                          `Status: ${
-                            order.status || "Pending"
-                          }\n` +
-                          `Address: ${
-                            order.delivery_address ||
-                            "-"
-                          }`
-                        )
-                      }
-                    >
-                      <FaEye />
-                      View
-                    </button>
+<button
+  className="view-btn"
+  onClick={() => openOrderDetails(order)}
+>
+  <FaEye />
+  View
+</button>
 
                   </td>
 
@@ -408,6 +399,204 @@ function Orders() {
         </div>
 
       )}
+
+{/* ===========================
+    Order Details Modal
+=========================== */}
+
+{selectedOrder && (
+  <div
+    className="order-modal-overlay"
+    onClick={closeOrderDetails}
+  >
+    <div
+      className="order-modal"
+      onClick={(e) => e.stopPropagation()}
+    >
+
+      {/* Modal Header */}
+      <div className="order-modal-header">
+
+        <div>
+          <h2>
+            Order #{selectedOrder.id}
+          </h2>
+
+          <p>
+            {formatDate(
+              selectedOrder.created_at
+            )}
+          </p>
+        </div>
+
+        <button
+          className="modal-close"
+          onClick={closeOrderDetails}
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      {/* Customer Information */}
+      <div className="modal-section">
+
+        <h3>
+          <FaUser />
+          Customer Information
+        </h3>
+
+        <div className="customer-details">
+
+          <div>
+            <span>Name</span>
+            <strong>
+              {selectedOrder.name || "-"}
+            </strong>
+          </div>
+
+          <div>
+            <span>Email</span>
+            <strong>
+              {selectedOrder.email || "-"}
+            </strong>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      {/* Delivery Address */}
+      <div className="modal-section">
+
+        <h3>📍 Delivery Address</h3>
+
+        <p className="delivery-address">
+          {selectedOrder.delivery_address || "-"}
+        </p>
+
+      </div>
+
+
+      {/* Order Items */}
+      <div className="modal-section">
+
+        <h3>
+          <FaBoxOpen />
+          Order Items
+        </h3>
+
+        <div className="modal-items">
+
+          {parseItems(selectedOrder.items).map(
+            (item, index) => (
+
+              <div
+                className="modal-item"
+                key={index}
+              >
+
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                  }}
+                />
+
+                <div className="modal-item-info">
+
+                  <strong>
+                    {item.name}
+                  </strong>
+
+                  <span>
+                    ₹
+                    {Number(
+                      item.price || 0
+                    ).toFixed(2)}{" "}
+                    × {item.quantity || 1}
+                  </span>
+
+                </div>
+
+                <strong className="item-total">
+                  ₹
+                  {(
+                    Number(item.price || 0) *
+                    Number(item.quantity || 1)
+                  ).toFixed(2)}
+                </strong>
+
+              </div>
+
+            )
+          )}
+
+        </div>
+
+      </div>
+
+
+      {/* Order Summary */}
+      <div className="modal-summary">
+
+        <div>
+          <span>Payment Status</span>
+
+          <strong
+            className={`status-badge ${
+              selectedOrder.payment_status
+                ?.toLowerCase() || "pending"
+            }`}
+          >
+            {selectedOrder.payment_status ||
+              "Pending"}
+          </strong>
+        </div>
+
+        <div>
+          <span>Order Status</span>
+
+          <strong
+            className={`modal-order-status ${getStatusClass(
+              selectedOrder.status
+            )}`}
+          >
+            {selectedOrder.status ||
+              "Pending"}
+          </strong>
+        </div>
+
+        <div className="modal-total">
+
+          <span>Total Amount</span>
+
+          <strong>
+            ₹
+            {Number(
+              selectedOrder.total_price || 0
+            ).toFixed(2)}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      {/* Close Button */}
+      <button
+        className="modal-close-btn"
+        onClick={closeOrderDetails}
+      >
+        Close
+      </button>
+
+    </div>
+  </div>
+)}
 
     </div>
   );
