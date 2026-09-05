@@ -635,6 +635,98 @@ app.get("/admin/top-selling-foods", authMiddleware, async (req, res) => {
 });
 
 /* ===========================
+   Admin - Sales Overview
+=========================== */
+app.get("/admin/sales-overview", authMiddleware, async (req, res) => {
+  try {
+    // Admin only
+    if (!req.user.is_admin) {
+      return res.status(403).json({
+        success: false,
+        message: "Admin access only",
+      });
+    }
+
+    const { startDate, endDate } = req.query;
+
+    // Default: last 30 days
+    const start =
+      startDate ||
+      new Date(Date.now() - 29 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0];
+
+    const end =
+      endDate ||
+      new Date().toISOString().split("T")[0];
+
+    /* ===========================
+       Summary
+    =========================== */
+
+    const summaryResult = await db.query(
+      `
+      SELECT
+        COUNT(*) AS orders,
+        COALESCE(SUM(total_price), 0) AS revenue
+      FROM orders
+      WHERE payment_status = 'Paid'
+      AND DATE(created_at) BETWEEN $1 AND $2
+      `,
+      [start, end]
+    );
+
+    /* ===========================
+       Daily Sales
+    =========================== */
+
+    const salesResult = await db.query(
+      `
+      SELECT
+        DATE(created_at) AS date,
+        COUNT(*) AS orders,
+        COALESCE(SUM(total_price), 0) AS revenue
+      FROM orders
+      WHERE payment_status = 'Paid'
+      AND DATE(created_at) BETWEEN $1 AND $2
+      GROUP BY DATE(created_at)
+      ORDER BY DATE(created_at)
+      `,
+      [start, end]
+    );
+
+    res.json({
+      success: true,
+
+      dateRange: {
+        startDate: start,
+        endDate: end,
+      },
+
+      summary: {
+        orders: Number(summaryResult.rows[0].orders),
+        revenue: Number(summaryResult.rows[0].revenue),
+      },
+
+      sales: salesResult.rows.map((item) => ({
+        date: item.date,
+        orders: Number(item.orders),
+        revenue: Number(item.revenue),
+      })),
+    });
+
+  } catch (error) {
+    console.error("Sales Overview Error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to load sales overview",
+      error: error.message,
+    });
+  }
+});
+
+/* ===========================
    Home
 =========================== */
 app.get("/", (req, res) => {

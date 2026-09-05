@@ -35,7 +35,54 @@ const [analytics, setAnalytics] = useState({
 
 const [loading, setLoading] = useState(true);
 
+const [salesOverview, setSalesOverview] = useState({
+  orders: 0,
+  revenue: 0,
+  sales: [],
+});
+
+const [salesLoading, setSalesLoading] = useState(false);
+
+const [salesPeriod, setSalesPeriod] = useState("30");
+
+const [customStartDate, setCustomStartDate] = useState("");
+const [customEndDate, setCustomEndDate] = useState("");
+
   const token = localStorage.getItem("token");
+
+const fetchSalesOverview = async (
+  startDate = null,
+  endDate = null
+) => {
+  try {
+    setSalesLoading(true);
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    let url = `${import.meta.env.VITE_API_URL}/admin/sales-overview`;
+
+    if (startDate && endDate) {
+      url += `?startDate=${startDate}&endDate=${endDate}`;
+    }
+
+    const response = await axios.get(url, {
+      headers,
+    });
+
+    setSalesOverview({
+      orders: response.data.summary?.orders || 0,
+      revenue: response.data.summary?.revenue || 0,
+      sales: response.data.sales || [],
+    });
+
+  } catch (error) {
+    console.error("Sales Overview Error:", error);
+  } finally {
+    setSalesLoading(false);
+  }
+};
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -82,8 +129,13 @@ setAnalytics({
       }
     };
 
-    fetchDashboard();
+    fetchDashboard();  
   }, [token]);
+
+// SALES OVERVIEW
+useEffect(() => {
+  fetchSalesOverview();
+}, [token]);
 
   const cards = [
     {
@@ -125,6 +177,8 @@ setAnalytics({
       year: "numeric",
     });
   };
+
+
 
   return (
     <div className="admin-page">
@@ -436,6 +490,186 @@ setAnalytics({
 
     </div>
   )}
+
+</div>
+
+{/* ================= SALES OVERVIEW ================= */}
+
+<div className="sales-overview-card">
+
+  <div className="sales-header">
+
+    <div>
+      <h2>📊 Sales Overview</h2>
+      <p>Track orders and revenue</p>
+    </div>
+
+    <div className="sales-periods">
+
+      <button
+        className={salesPeriod === "1" ? "active" : ""}
+        onClick={() => {
+          setSalesPeriod("1");
+
+          const today = new Date()
+            .toISOString()
+            .split("T")[0];
+
+          fetchSalesOverview(today, today);
+        }}
+      >
+        Today
+      </button>
+
+      <button
+        className={salesPeriod === "7" ? "active" : ""}
+        onClick={() => {
+          setSalesPeriod("7");
+
+          const end = new Date();
+
+          const start = new Date();
+          start.setDate(end.getDate() - 6);
+
+          fetchSalesOverview(
+            start.toISOString().split("T")[0],
+            end.toISOString().split("T")[0]
+          );
+        }}
+      >
+        7 Days
+      </button>
+
+      <button
+        className={salesPeriod === "30" ? "active" : ""}
+        onClick={() => {
+          setSalesPeriod("30");
+
+          fetchSalesOverview();
+        }}
+      >
+        30 Days
+      </button>
+
+    </div>
+
+  </div>
+
+
+  {/* SUMMARY */}
+
+  <div className="sales-summary">
+
+    <div className="sales-summary-box">
+
+      <span>Total Orders</span>
+
+      <strong>
+        {salesLoading
+          ? "..."
+          : salesOverview.orders}
+      </strong>
+
+    </div>
+
+
+    <div className="sales-summary-box">
+
+      <span>Total Revenue</span>
+
+      <strong>
+        {salesLoading
+          ? "..."
+          : `₹${Number(
+              salesOverview.revenue
+            ).toLocaleString("en-IN")}`}
+      </strong>
+
+    </div>
+
+  </div>
+
+
+  {/* CHART */}
+
+  <div className="sales-chart">
+
+    {salesLoading ? (
+      <div className="no-chart-data">
+        Loading sales data...
+      </div>
+    ) : salesOverview.sales.length === 0 ? (
+      <div className="no-chart-data">
+        No sales data available.
+      </div>
+    ) : (
+
+      <ResponsiveContainer
+        width="100%"
+        height={350}
+      >
+
+        <LineChart
+          data={salesOverview.sales}
+        >
+
+          <CartesianGrid
+            strokeDasharray="3 3"
+          />
+
+          <XAxis
+            dataKey="date"
+            tickFormatter={(date) =>
+              new Date(date).toLocaleDateString(
+                "en-IN",
+                {
+                  day: "2-digit",
+                  month: "short",
+                }
+              )
+            }
+          />
+
+          <YAxis />
+
+          <Tooltip
+            formatter={(value, name) => [
+              name === "revenue"
+                ? `₹${Number(
+                    value
+                  ).toLocaleString("en-IN")}`
+                : value,
+              name === "revenue"
+                ? "Revenue"
+                : "Orders",
+            ]}
+          />
+
+          <Legend />
+
+          <Line
+            type="monotone"
+            dataKey="revenue"
+            stroke="#E23744"
+            strokeWidth={3}
+            dot={{ r: 4 }}
+          />
+
+          <Line
+            type="monotone"
+            dataKey="orders"
+            stroke="#176291"
+            strokeWidth={3}
+            dot={{ r: 4 }}
+          />
+
+        </LineChart>
+
+      </ResponsiveContainer>
+
+    )}
+
+  </div>
 
 </div>
 
