@@ -864,3 +864,61 @@
   }
 
 }
+
+/* ================= EXPORT BUTTONS ================= */
+
+.export-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.export-buttons button {
+  border: none;
+  padding: 9px 15px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  white-space: nowrap;
+}
+
+.export-csv-btn {
+  background: #176291;
+  color: white;
+}
+
+.export-csv-btn:hover {
+  background: #124e73;
+  transform: translateY(-1px);
+}
+
+.export-excel-btn {
+  background: #4caf50;
+  color: white;
+}
+
+.export-excel-btn:hover {
+  background: #388e3c;
+  transform: translateY(-1px);
+}
+
+.export-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* MOBILE EXPORT BUTTONS */
+
+@media (max-width: 700px) {
+  .export-buttons {
+    width: 100%;
+  }
+
+  .export-buttons button {
+    flex: 1;
+  }
+}

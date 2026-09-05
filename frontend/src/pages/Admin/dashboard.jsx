@@ -3,6 +3,7 @@ import "./dashboard.css";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import * as XLSX from "xlsx";
 import {
   FaHamburger,
   FaUsers,
@@ -83,6 +84,80 @@ const fetchSalesOverview = async (
     setSalesLoading(false);
   }
 };
+
+  // EXPORT SALES AS CSV
+  const exportCSV = () => {
+    if (salesOverview.sales.length === 0) {
+      alert("No sales data available to export.");
+      return;
+    }
+
+    const csvData = salesOverview.sales.map((item) => ({
+      Date: item.date,
+      Orders: Number(item.orders || 0),
+      Revenue: Number(item.revenue || 0),
+    }));
+
+    const headers = ["Date", "Orders", "Revenue"];
+
+    const csvRows = [
+      headers.join(","),
+      ...csvData.map((row) =>
+        [
+          row.Date,
+          row.Orders,
+          row.Revenue,
+        ].join(",")
+      ),
+    ];
+
+    const csvContent = csvRows.join("\n");
+
+    const blob = new Blob([csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "quick-bite-sales-report.csv";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+  };
+
+  // EXPORT SALES AS EXCEL
+  const exportExcel = () => {
+    if (salesOverview.sales.length === 0) {
+      alert("No sales data available to export.");
+      return;
+    }
+
+    const excelData = salesOverview.sales.map((item) => ({
+      Date: item.date,
+      Orders: Number(item.orders || 0),
+      Revenue: Number(item.revenue || 0),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      "Sales Report"
+    );
+
+    XLSX.writeFile(
+      workbook,
+      "quick-bite-sales-report.xlsx"
+    );
+  };
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -601,6 +676,24 @@ useEffect(() => {
     </button>
 
   </div>
+
+<div className="export-buttons">
+  <button
+    className="export-csv-btn"
+    onClick={exportCSV}
+    disabled={salesLoading || salesOverview.sales.length === 0}
+  >
+    📄 Export CSV
+  </button>
+
+  <button
+    className="export-excel-btn"
+    onClick={exportExcel}
+    disabled={salesLoading || salesOverview.sales.length === 0}
+  >
+    📊 Export Excel
+  </button>
+</div>  
 
 </div>
 
