@@ -576,6 +576,65 @@ app.get("/admin/dashboard", authMiddleware, async (req, res) => {
 });
 
 /* ===========================
+   Admin - Top Selling Foods
+=========================== */
+app.get("/admin/top-selling-foods", authMiddleware, async (req, res) => {
+  try {
+    if (!req.user.is_admin) {
+      return res.status(403).json({
+        success: false,
+        message: "Admin access only",
+      });
+    }
+
+    const result = await db.query(`
+      SELECT
+        item->>'name' AS name,
+        SUM(
+          COALESCE(
+            (item->>'quantity')::INTEGER,
+            1
+          )
+        ) AS quantity,
+        SUM(
+          COALESCE(
+            (item->>'price')::NUMERIC,
+            0
+          ) *
+          COALESCE(
+            (item->>'quantity')::INTEGER,
+            1
+          )
+        ) AS revenue
+      FROM orders,
+      jsonb_array_elements(items::jsonb) AS item
+      WHERE payment_status = 'Paid'
+      GROUP BY item->>'name'
+      ORDER BY quantity DESC
+      LIMIT 10
+    `);
+
+    res.json({
+      success: true,
+      topSellingFoods: result.rows.map((item) => ({
+        name: item.name,
+        quantity: Number(item.quantity),
+        revenue: Number(item.revenue),
+      })),
+    });
+
+  } catch (error) {
+    console.error("Top Selling Foods Error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to load top selling foods",
+      error: error.message,
+    });
+  }
+});
+
+/* ===========================
    Home
 =========================== */
 app.get("/", (req, res) => {
