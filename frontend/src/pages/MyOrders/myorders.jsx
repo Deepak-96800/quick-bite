@@ -48,7 +48,7 @@ function MyOrders() {
         } else {
           alert(
             error.response?.data?.message ||
-            "Unable to load orders."
+              "Unable to load orders."
           );
         }
       } finally {
@@ -59,10 +59,44 @@ function MyOrders() {
     fetchOrders();
   }, [navigate]);
 
+  const orderStatuses = [
+    "Pending",
+    "Confirmed",
+    "Preparing",
+    "Out for Delivery",
+    "Delivered",
+  ];
+
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "Pending":
+        return "status-pending";
+
+      case "Confirmed":
+        return "status-confirmed";
+
+      case "Preparing":
+        return "status-preparing";
+
+      case "Out for Delivery":
+        return "status-delivery";
+
+      case "Delivered":
+        return "status-delivered";
+
+      case "Cancelled":
+        return "status-cancelled";
+
+      default:
+        return "status-pending";
+    }
+  };
+
   if (loading) {
     return (
       <>
         <Navbar />
+
         <div className="orders-page">
           <h2>Loading Orders...</h2>
         </div>
@@ -90,32 +124,111 @@ function MyOrders() {
               items =
                 typeof order.items === "string"
                   ? JSON.parse(order.items)
-                  : order.items;
+                  : order.items || [];
             } catch {
               items = [];
             }
 
+            const currentStatus = order.status || "Pending";
+
+            const currentStatusIndex =
+              orderStatuses.indexOf(currentStatus);
+
             return (
               <div className="order-card" key={order.id}>
+                {/* =========================
+                    ORDER HEADER
+                ========================== */}
                 <div className="order-header">
                   <h3>Order #{order.id}</h3>
 
-                  <span className="status">
-                    {order.payment_status}
+                  <span
+                    className={`status ${getStatusClass(
+                      currentStatus
+                    )}`}
+                  >
+                    {currentStatus}
                   </span>
                 </div>
 
+                {/* =========================
+                    ORDER TRACKING
+                ========================== */}
+                {currentStatus !== "Cancelled" && (
+                  <div className="order-tracking">
+                    <h4>Order Tracking</h4>
+
+                    <div className="tracking-container">
+                      {orderStatuses.map((status, index) => {
+                        const completed =
+                          currentStatusIndex >= index;
+
+                        return (
+                          <div
+                            className={`tracking-step ${
+                              completed ? "completed" : ""
+                            }`}
+                            key={status}
+                          >
+                            <div className="tracking-circle">
+                              {completed ? "✓" : index + 1}
+                            </div>
+
+                            <p>{status}</p>
+
+                            {index < orderStatuses.length - 1 && (
+                              <div
+                                className={`tracking-line ${
+                                  currentStatusIndex > index
+                                    ? "completed-line"
+                                    : ""
+                                }`}
+                              ></div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* =========================
+                    CANCELLED MESSAGE
+                ========================== */}
+                {currentStatus === "Cancelled" && (
+                  <div className="cancelled-message">
+                    ❌ This order has been cancelled.
+                  </div>
+                )}
+
+                {/* =========================
+                    PAYMENT STATUS
+                ========================== */}
+                <p>
+                  <strong>Payment Status:</strong>{" "}
+                  {order.payment_status || "Pending"}
+                </p>
+
+                {/* =========================
+                    TOTAL
+                ========================== */}
                 <p>
                   <strong>Total:</strong> ₹
                   {Number(order.total_price).toFixed(2)}
                 </p>
 
+                {/* =========================
+                    DELIVERY ADDRESS
+                ========================== */}
                 <p>
                   <strong>Delivery Address:</strong>
                 </p>
 
                 <p>{order.delivery_address}</p>
 
+                {/* =========================
+                    ORDER ITEMS
+                ========================== */}
                 <div className="order-items">
                   <h4>Items</h4>
 
@@ -137,9 +250,14 @@ function MyOrders() {
                   ))}
                 </div>
 
+                {/* =========================
+                    ORDER DATE
+                ========================== */}
                 <p className="order-date">
                   Ordered on{" "}
-                  {new Date(order.created_at).toLocaleString()}
+                  {new Date(
+                    order.created_at
+                  ).toLocaleString()}
                 </p>
               </div>
             );
