@@ -12,7 +12,20 @@ import {
 function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [updatingId, setUpdatingId] = useState(null);
 
+  const statuses = [
+    "Pending",
+    "Confirmed",
+    "Preparing",
+    "Out for Delivery",
+    "Delivered",
+    "Cancelled",
+  ];
+
+  /* ===========================
+     Fetch All Orders
+  =========================== */
   const fetchOrders = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -27,6 +40,7 @@ function Orders() {
       );
 
       setOrders(res.data.orders || []);
+
     } catch (error) {
       console.error("Fetch Orders Error:", error);
 
@@ -34,6 +48,7 @@ function Orders() {
         error.response?.data?.message ||
           "Unable to load orders."
       );
+
     } finally {
       setLoading(false);
     }
@@ -43,7 +58,9 @@ function Orders() {
     fetchOrders();
   }, []);
 
-  // Safely parse order items
+  /* ===========================
+     Parse Items
+  =========================== */
   const parseItems = (items) => {
     if (Array.isArray(items)) return items;
 
@@ -57,17 +74,22 @@ function Orders() {
     }
   };
 
-  // Get number of items
+  /* ===========================
+     Item Count
+  =========================== */
   const getItemCount = (items) => {
     const parsedItems = parseItems(items);
 
     return parsedItems.reduce(
-      (total, item) => total + Number(item.quantity || 1),
+      (total, item) =>
+        total + Number(item.quantity || 1),
       0
     );
   };
 
-  // Format date
+  /* ===========================
+     Format Date
+  =========================== */
   const formatDate = (date) => {
     if (!date) return "-";
 
@@ -80,30 +102,73 @@ function Orders() {
     });
   };
 
-  // Payment status class
-  const getPaymentClass = (status) => {
-    if (!status) return "pending";
+  /* ===========================
+     Update Order Status
+  =========================== */
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      setUpdatingId(orderId);
 
-    const value = status.toLowerCase();
+      const token = localStorage.getItem("token");
 
-    if (value === "paid" || value === "success") {
-      return "paid";
+      const res = await axios.put(
+        `${import.meta.env.VITE_API_URL}/admin/orders/${orderId}/status`,
+        {
+          status: newStatus,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.data.success) {
+        // Update only the changed order
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order.id === orderId
+              ? {
+                  ...order,
+                  status: newStatus,
+                }
+              : order
+          )
+        );
+
+        alert("✅ Order status updated");
+      }
+
+    } catch (error) {
+      console.error("Update Status Error:", error);
+
+      alert(
+        error.response?.data?.message ||
+          "Unable to update order status."
+      );
+
+      // Reload orders in case of error
+      fetchOrders();
+
+    } finally {
+      setUpdatingId(null);
     }
-
-    if (value === "failed") {
-      return "failed";
-    }
-
-    return "pending";
   };
 
-  // Order status class
-  const getOrderStatusClass = (status) => {
+  /* ===========================
+     Status Class
+  =========================== */
+  const getStatusClass = (status) => {
     if (!status) return "pending";
 
-    return status.toLowerCase().replace(/\s+/g, "-");
+    return status
+      .toLowerCase()
+      .replace(/\s+/g, "-");
   };
 
+  /* ===========================
+     Loading
+  =========================== */
   if (loading) {
     return (
       <div className="orders-page">
@@ -118,7 +183,9 @@ function Orders() {
   return (
     <div className="orders-page">
 
-      {/* Header */}
+      {/* ===========================
+          Header
+      =========================== */}
       <div className="orders-header">
 
         <div>
@@ -133,16 +200,27 @@ function Orders() {
 
       </div>
 
-      {/* Empty Orders */}
+      {/* ===========================
+          No Orders
+      =========================== */}
       {orders.length === 0 ? (
         <div className="no-orders">
+
           <FaBoxOpen />
+
           <h2>No Orders Found</h2>
-          <p>There are currently no customer orders.</p>
+
+          <p>
+            There are currently no customer orders.
+          </p>
+
         </div>
       ) : (
 
-        /* Orders Table */
+        /* ===========================
+           Orders Table
+        =========================== */
+
         <div className="orders-table-container">
 
           <table className="orders-table">
@@ -175,6 +253,7 @@ function Orders() {
 
                   {/* Customer */}
                   <td>
+
                     <div className="customer-info">
 
                       <div className="customer-icon">
@@ -192,6 +271,7 @@ function Orders() {
                       </div>
 
                     </div>
+
                   </td>
 
                   {/* Items */}
@@ -203,63 +283,118 @@ function Orders() {
 
                   {/* Total */}
                   <td>
+
                     <span className="order-total">
                       <FaRupeeSign />
-                      {Number(order.total_price || 0).toFixed(2)}
+                      {Number(
+                        order.total_price || 0
+                      ).toFixed(2)}
                     </span>
+
                   </td>
 
                   {/* Payment */}
                   <td>
+
                     <span
-                      className={`status-badge ${getPaymentClass(
+                      className={`status-badge ${
                         order.payment_status
-                      )}`}
+                          ?.toLowerCase() || "pending"
+                      }`}
                     >
                       {order.payment_status || "Pending"}
                     </span>
+
                   </td>
 
                   {/* Order Status */}
                   <td>
-                    <span
-                      className={`status-badge order-status ${getOrderStatusClass(
+
+                    <select
+                      value={order.status || "Pending"}
+                      disabled={updatingId === order.id}
+                      onChange={(e) =>
+                        updateOrderStatus(
+                          order.id,
+                          e.target.value
+                        )
+                      }
+                      className={`status-select ${getStatusClass(
                         order.status
                       )}`}
                     >
-                      {order.status || "Pending"}
-                    </span>
+
+                      {statuses.map((status) => (
+                        <option
+                          key={status}
+                          value={status}
+                        >
+                          {status}
+                        </option>
+                      ))}
+
+                    </select>
+
+                    {updatingId === order.id && (
+                      <small className="updating-text">
+                        Updating...
+                      </small>
+                    )}
+
                   </td>
 
                   {/* Date */}
                   <td>
+
                     <div className="date-info">
+
                       <FaCalendarAlt />
+
                       <span>
-                        {formatDate(order.created_at)}
+                        {formatDate(
+                          order.created_at
+                        )}
                       </span>
+
                     </div>
+
                   </td>
 
-                  {/* View */}
+                  {/* Action */}
                   <td>
+
                     <button
                       className="view-btn"
                       onClick={() =>
                         alert(
-                          `Order #${order.id}\n\nCustomer: ${
-                            order.name
-                          }\nEmail: ${
-                            order.email
-                          }\nTotal: ₹${Number(
+                          `Order #${order.id}\n\n` +
+                          `Customer: ${
+                            order.name || "-"
+                          }\n` +
+                          `Email: ${
+                            order.email || "-"
+                          }\n` +
+                          `Total: ₹${Number(
                             order.total_price || 0
-                          ).toFixed(2)}`
+                          ).toFixed(2)}\n` +
+                          `Payment: ${
+                            order.payment_status ||
+                            "-"
+                          }\n` +
+                          `Status: ${
+                            order.status || "Pending"
+                          }\n` +
+                          `Address: ${
+                            order.delivery_address ||
+                            "-"
+                          }`
                         )
                       }
                     >
                       <FaEye />
                       View
                     </button>
+
                   </td>
 
                 </tr>

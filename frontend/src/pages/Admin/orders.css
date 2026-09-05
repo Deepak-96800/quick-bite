@@ -407,3 +407,60 @@
   }
 
 }
+
+/* ===========================
+   Status Select
+=========================== */
+
+.status-select {
+  border: none;
+  outline: none;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 140px;
+}
+
+.status-select.pending {
+  background: #fff4df;
+  color: #b77900;
+}
+
+.status-select.confirmed {
+  background: #e8f0ff;
+  color: #2864d7;
+}
+
+.status-select.preparing {
+  background: #fff0df;
+  color: #d97706;
+}
+
+.status-select.out-for-delivery {
+  background: #e8f7ff;
+  color: #087ea4;
+}
+
+.status-select.delivered {
+  background: #e9f9ef;
+  color: #1c8c4c;
+}
+
+.status-select.cancelled {
+  background: #ffe9e9;
+  color: #d32f2f;
+}
+
+.status-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.updating-text {
+  display: block;
+  margin-top: 5px;
+  font-size: 10px;
+  color: #888;
+}
