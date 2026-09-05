@@ -386,6 +386,83 @@ app.get("/admin/orders", authMiddleware, async (req, res) => {
 }); 
 
 /* ===========================
+   Admin - Update Order Status
+=========================== */
+app.put("/admin/orders/:id/status", authMiddleware, async (req, res) => {
+  try {
+    // Admin only
+    if (!req.user.is_admin) {
+      return res.status(403).json({
+        success: false,
+        message: "Admin access only",
+      });
+    }
+
+    const { id } = req.params;
+    const { status } = req.body;
+
+    console.log("Updating Order:", id);
+    console.log("New Status:", status);
+
+    const allowedStatuses = [
+      "Pending",
+      "Confirmed",
+      "Preparing",
+      "Out for Delivery",
+      "Delivered",
+      "Cancelled",
+    ];
+
+    // Validate status
+    if (!status) {
+      return res.status(400).json({
+        success: false,
+        message: "Status is required",
+      });
+    }
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid order status",
+      });
+    }
+
+    // Update order
+    const result = await db.query(
+      `UPDATE orders
+       SET status = $1
+       WHERE id = $2
+       RETURNING *`,
+      [status, id]
+    );
+
+    // Order not found
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Order status updated successfully",
+      order: result.rows[0],
+    });
+
+  } catch (error) {
+    console.error("Update Order Status Error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to update order status",
+      error: error.message,
+    });
+  }
+});
+
+/* ===========================
    Admin Dashboard
 =========================== */
 app.get("/admin/dashboard", authMiddleware, async (req, res) => {
