@@ -467,38 +467,109 @@ app.put("/admin/orders/:id/status", authMiddleware, async (req, res) => {
 =========================== */
 app.get("/admin/dashboard", authMiddleware, async (req, res) => {
   try {
-    // Allow only admins
     if (!req.user.is_admin) {
       return res.status(403).json({
+        success: false,
         message: "Admin access only",
       });
     }
 
+    // Total foods
     const foods = await db.query(
       "SELECT COUNT(*) FROM foods"
     );
 
+    // Total users
     const users = await db.query(
       "SELECT COUNT(*) FROM users"
     );
 
+    // Total orders
     const orders = await db.query(
       "SELECT COUNT(*) FROM orders"
     );
 
+    // Total revenue from paid orders
     const revenue = await db.query(
-      "SELECT COALESCE(SUM(total_price),0) FROM orders WHERE payment_status='Paid'"
+      `SELECT COALESCE(SUM(total_price), 0)
+       FROM orders
+       WHERE payment_status = 'Paid'`
+    );
+
+    // Today's orders
+    const todayOrders = await db.query(
+      `SELECT COUNT(*)
+       FROM orders
+       WHERE DATE(created_at) = CURRENT_DATE`
+    );
+
+    // Today's revenue
+    const todayRevenue = await db.query(
+      `SELECT COALESCE(SUM(total_price), 0)
+       FROM orders
+       WHERE payment_status = 'Paid'
+       AND DATE(created_at) = CURRENT_DATE`
+    );
+
+    // Order status counts
+    const statusResult = await db.query(
+      `SELECT status, COUNT(*) AS count
+       FROM orders
+       GROUP BY status
+       ORDER BY status`
+    );
+
+    // Recent revenue for last 7 days
+    const revenueResult = await db.query(
+      `SELECT
+         DATE(created_at) AS date,
+         COALESCE(SUM(total_price), 0) AS revenue
+       FROM orders
+       WHERE payment_status = 'Paid'
+       AND created_at >= CURRENT_DATE - INTERVAL '6 days'
+       GROUP BY DATE(created_at)
+       ORDER BY DATE(created_at)`
+    );
+
+    // Recent orders for last 7 days
+    const orderResult = await db.query(
+      `SELECT
+         DATE(created_at) AS date,
+         COUNT(*) AS orders
+       FROM orders
+       WHERE created_at >= CURRENT_DATE - INTERVAL '6 days'
+       GROUP BY DATE(created_at)
+       ORDER BY DATE(created_at)`
     );
 
     res.json({
+      success: true,
+
       totalFoods: Number(foods.rows[0].count),
+
       totalUsers: Number(users.rows[0].count),
+
       totalOrders: Number(orders.rows[0].count),
+
       totalRevenue: Number(revenue.rows[0].coalesce),
+
+      todayOrders: Number(todayOrders.rows[0].count),
+
+      todayRevenue: Number(todayRevenue.rows[0].coalesce),
+
+      orderStatus: statusResult.rows,
+
+      revenueLast7Days: revenueResult.rows,
+
+      ordersLast7Days: orderResult.rows,
     });
 
   } catch (error) {
+    console.error("Admin Dashboard Error:", error);
+
     res.status(500).json({
+      success: false,
+      message: "Failed to load dashboard",
       error: error.message,
     });
   }
