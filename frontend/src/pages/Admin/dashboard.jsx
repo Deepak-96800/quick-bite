@@ -504,54 +504,105 @@ useEffect(() => {
       <p>Track orders and revenue</p>
     </div>
 
-    <div className="sales-periods">
+<div className="sales-controls">
 
-      <button
-        className={salesPeriod === "1" ? "active" : ""}
-        onClick={() => {
-          setSalesPeriod("1");
+  <div className="sales-periods">
 
-          const today = new Date()
-            .toISOString()
-            .split("T")[0];
+    <button
+      className={salesPeriod === "1" ? "active" : ""}
+      onClick={() => {
+        setSalesPeriod("1");
 
-          fetchSalesOverview(today, today);
-        }}
-      >
-        Today
-      </button>
+        const today = new Date()
+          .toISOString()
+          .split("T")[0];
 
-      <button
-        className={salesPeriod === "7" ? "active" : ""}
-        onClick={() => {
-          setSalesPeriod("7");
+        fetchSalesOverview(today, today);
+      }}
+    >
+      Today
+    </button>
 
-          const end = new Date();
+    <button
+      className={salesPeriod === "7" ? "active" : ""}
+      onClick={() => {
+        setSalesPeriod("7");
 
-          const start = new Date();
-          start.setDate(end.getDate() - 6);
+        const end = new Date();
 
-          fetchSalesOverview(
-            start.toISOString().split("T")[0],
-            end.toISOString().split("T")[0]
-          );
-        }}
-      >
-        7 Days
-      </button>
+        const start = new Date();
+        start.setDate(end.getDate() - 6);
 
-      <button
-        className={salesPeriod === "30" ? "active" : ""}
-        onClick={() => {
-          setSalesPeriod("30");
+        fetchSalesOverview(
+          start.toISOString().split("T")[0],
+          end.toISOString().split("T")[0]
+        );
+      }}
+    >
+      7 Days
+    </button>
 
-          fetchSalesOverview();
-        }}
-      >
-        30 Days
-      </button>
+    <button
+      className={salesPeriod === "30" ? "active" : ""}
+      onClick={() => {
+        setSalesPeriod("30");
 
-    </div>
+        fetchSalesOverview();
+      }}
+    >
+      30 Days
+    </button>
+
+  </div>
+
+  <div className="custom-date-range">
+
+    <input
+      type="date"
+      value={customStartDate}
+      onChange={(e) => {
+        setCustomStartDate(e.target.value);
+        setSalesPeriod("custom");
+      }}
+    />
+
+    <span>to</span>
+
+    <input
+      type="date"
+      value={customEndDate}
+      onChange={(e) => {
+        setCustomEndDate(e.target.value);
+        setSalesPeriod("custom");
+      }}
+    />
+
+    <button
+      className="apply-date-btn"
+      onClick={() => {
+
+        if (!customStartDate || !customEndDate) {
+          alert("Please select both start and end dates.");
+          return;
+        }
+
+        if (customStartDate > customEndDate) {
+          alert("Start date cannot be after end date.");
+          return;
+        }
+
+        fetchSalesOverview(
+          customStartDate,
+          customEndDate
+        );
+      }}
+    >
+      Apply
+    </button>
+
+  </div>
+
+</div>
 
   </div>
 

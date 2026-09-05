@@ -803,6 +803,25 @@
     flex: 1;
   }
 
+.sales-controls {
+  width: 100%;
+  align-items: stretch;
+}
+
+.custom-date-range {
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.custom-date-range input {
+  flex: 1;
+  min-width: 130px;
+}
+
+.apply-date-btn {
+  flex: 1;
+}  
+
 }
 
 @media (max-width: 500px) {
@@ -811,4 +830,51 @@
     grid-template-columns: 1fr;
   }
 
+}
+
+.sales-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.custom-date-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.custom-date-range input {
+  border: 1px solid #ddd;
+  background: white;
+  padding: 9px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #333;
+  outline: none;
+}
+
+.custom-date-range input:focus {
+  border-color: #176291;
+}
+
+.custom-date-range span {
+  color: #777;
+  font-size: 13px;
+}
+
+.apply-date-btn {
+  border: none;
+  background: #e23744;
+  color: white;
+  padding: 9px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+.apply-date-btn:hover {
+  background: #c92f3b;
 }
