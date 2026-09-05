@@ -337,34 +337,37 @@ setAnalytics({
   ) : (
     <div className="status-chart">
 
-      <ResponsiveContainer width="100%" height={320}>
+      <ResponsiveContainer width="100%" height={350}>
         <PieChart>
 
-          <Pie
-            data={analytics.orderStatus}
-            dataKey="count"
-            nameKey="status"
-            cx="50%"
-            cy="50%"
-            outerRadius={110}
-            label
-          >
-            {analytics.orderStatus.map(
-              (entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={[
-                    "#FF9800",
-                    "#2196F3",
-                    "#9C27B0",
-                    "#03A9F4",
-                    "#4CAF50",
-                    "#E23744",
-                  ][index % 6]}
-                />
-              )
-            )}
-          </Pie>
+<Pie
+  data={analytics.orderStatus.map((item) => ({
+    ...item,
+    count: Number(item.count),
+  }))}
+  dataKey="count"
+  nameKey="status"
+  cx="50%"
+  cy="50%"
+  innerRadius={60}
+  outerRadius={110}
+  paddingAngle={3}
+  label
+>
+  {analytics.orderStatus.map((entry, index) => (
+    <Cell
+      key={`cell-${index}`}
+      fill={[
+        "#FF9800",
+        "#2196F3",
+        "#9C27B0",
+        "#03A9F4",
+        "#4CAF50",
+        "#E23744",
+      ][index % 6]}
+    />
+  ))}
+</Pie>
 
           <Tooltip />
 
