@@ -208,6 +208,32 @@ const exportExcel = () => {
     "Daily Sales"
   );
 
+// ================= FOOD SALES SHEET =================
+
+const foodSalesData = analytics.topSellingFoods.map(
+  (food, index) => ({
+    Rank: index + 1,
+    Food: food.name,
+    "Quantity Sold": Number(food.quantity || 0),
+    Revenue: Number(food.revenue || 0),
+  })
+);
+
+const foodSheet = XLSX.utils.json_to_sheet(foodSalesData);
+
+foodSheet["!cols"] = [
+  { wch: 10 },
+  { wch: 30 },
+  { wch: 18 },
+  { wch: 18 },
+];
+
+XLSX.utils.book_append_sheet(
+  workbook,
+  foodSheet,
+  "Food Sales"
+);
+
   // ================= EXPORT =================
 
   XLSX.writeFile(
