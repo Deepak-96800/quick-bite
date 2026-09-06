@@ -130,34 +130,91 @@ const fetchSalesOverview = async (
     URL.revokeObjectURL(url);
   };
 
-  // EXPORT SALES AS EXCEL
-  const exportExcel = () => {
-    if (salesOverview.sales.length === 0) {
-      alert("No sales data available to export.");
-      return;
-    }
+// EXPORT PROFESSIONAL SALES REPORT AS EXCEL
+const exportExcel = () => {
+  if (salesOverview.sales.length === 0) {
+    alert("No sales data available to export.");
+    return;
+  }
 
-    const excelData = salesOverview.sales.map((item) => ({
-      Date: item.date,
-      Orders: Number(item.orders || 0),
-      Revenue: Number(item.revenue || 0),
-    }));
+  // Daily sales data
+  const salesData = salesOverview.sales.map((item) => ({
+    Date: item.date,
+    Orders: Number(item.orders || 0),
+    Revenue: Number(item.revenue || 0),
+  }));
 
-    const worksheet = XLSX.utils.json_to_sheet(excelData);
+  // Create workbook
+  const workbook = XLSX.utils.book_new();
 
-    const workbook = XLSX.utils.book_new();
+  // ================= SUMMARY SHEET =================
 
-    XLSX.utils.book_append_sheet(
-      workbook,
-      worksheet,
-      "Sales Report"
-    );
+  const summaryData = [
+    ["QUICK BITE - SALES REPORT"],
+    [],
+    ["Report Information", ""],
+    ["Generated On", new Date().toLocaleString("en-IN")],
+    ["Total Orders", Number(salesOverview.orders || 0)],
+    [
+      "Total Revenue",
+      `₹${Number(salesOverview.revenue || 0).toLocaleString("en-IN")}`,
+    ],
+    [],
+    ["Daily Sales", "", ""],
+    ["Date", "Orders", "Revenue"],
+    ...salesData.map((item) => [
+      item.Date,
+      item.Orders,
+      `₹${item.Revenue.toLocaleString("en-IN")}`,
+    ]),
+  ];
 
-    XLSX.writeFile(
-      workbook,
-      "quick-bite-sales-report.xlsx"
-    );
-  };
+  const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
+
+  // Column widths
+  summarySheet["!cols"] = [
+    { wch: 25 },
+    { wch: 20 },
+    { wch: 20 },
+  ];
+
+  // Merge report title
+  summarySheet["!merges"] = [
+    {
+      s: { r: 0, c: 0 },
+      e: { r: 0, c: 2 },
+    },
+  ];
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    summarySheet,
+    "Sales Summary"
+  );
+
+  // ================= DAILY SALES SHEET =================
+
+  const dailySheet = XLSX.utils.json_to_sheet(salesData);
+
+  dailySheet["!cols"] = [
+    { wch: 18 },
+    { wch: 12 },
+    { wch: 18 },
+  ];
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    dailySheet,
+    "Daily Sales"
+  );
+
+  // ================= EXPORT =================
+
+  XLSX.writeFile(
+    workbook,
+    "quick-bite-sales-report.xlsx"
+  );
+};
 
   useEffect(() => {
     const fetchDashboard = async () => {
