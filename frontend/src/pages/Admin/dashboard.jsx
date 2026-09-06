@@ -130,6 +130,42 @@ const fetchSalesOverview = async (
     URL.revokeObjectURL(url);
   };
 
+const styleWorksheet = (worksheet, headerRow) => {
+  const range = XLSX.utils.decode_range(worksheet["!ref"]);
+
+  // Header formatting
+  for (let col = range.s.c; col <= range.e.c; col++) {
+    const cellAddress = XLSX.utils.encode_cell({
+      r: headerRow,
+      c: col,
+    });
+
+    if (worksheet[cellAddress]) {
+      worksheet[cellAddress].s = {
+        font: {
+          bold: true,
+          color: { rgb: "FFFFFF" },
+        },
+        alignment: {
+          horizontal: "center",
+          vertical: "center",
+        },
+      };
+    }
+  }
+
+  // Freeze rows
+  worksheet["!freeze"] = {
+    xSplit: 0,
+    ySplit: headerRow + 1,
+  };
+
+  // Auto filter
+  worksheet["!autofilter"] = {
+    ref: XLSX.utils.encode_range(range),
+  };
+};
+
 // EXPORT PROFESSIONAL SALES REPORT AS EXCEL
 const exportExcel = () => {
   if (salesOverview.sales.length === 0) {
@@ -186,6 +222,28 @@ const exportExcel = () => {
     },
   ];
 
+// Format summary values
+if (summarySheet["B4"]) {
+  summarySheet["B4"].s = {
+    font: { bold: true },
+  };
+}
+
+if (summarySheet["B5"]) {
+  summarySheet["B5"].s = {
+    font: { bold: true },
+  };
+}
+
+if (summarySheet["B6"]) {
+  summarySheet["B6"].s = {
+    font: { bold: true },
+  };
+}
+
+// Daily Sales header is row 9
+styleWorksheet(summarySheet, 8);
+
   XLSX.utils.book_append_sheet(
     workbook,
     summarySheet,
@@ -195,6 +253,7 @@ const exportExcel = () => {
   // ================= DAILY SALES SHEET =================
 
   const dailySheet = XLSX.utils.json_to_sheet(salesData);
+styleWorksheet(dailySheet, 0);
 
   dailySheet["!cols"] = [
     { wch: 18 },
@@ -220,6 +279,8 @@ const foodSalesData = analytics.topSellingFoods.map(
 );
 
 const foodSheet = XLSX.utils.json_to_sheet(foodSalesData);
+
+styleWorksheet(foodSheet, 0);
 
 foodSheet["!cols"] = [
   { wch: 10 },
